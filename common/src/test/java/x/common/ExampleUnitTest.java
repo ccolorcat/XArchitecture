@@ -57,4 +57,9 @@ public class ExampleUnitTest {
         List<Person> persons2 = model.loadPersons();
         assertEquals(original, persons2);
     }
+
+    @Test
+    public void genericTest() {
+
+    }
 }

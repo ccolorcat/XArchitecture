@@ -7,6 +7,7 @@ import x.common.util.Utils;
 
 /**
  * Thread-safe
+ * <p>
  * Author: cxx
  * Date: 2020-07-30
  * GitHub: https://github.com/ccolorcat
