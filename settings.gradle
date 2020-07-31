@@ -1,0 +1,122 @@
+import groovy.xml.XmlUtil
+
+void includeWithApi(String... pluginPaths) {
+    pluginPaths.each {
+        generateApiModule(it)
+    }
+}
+
+void generateApiModule(String pluginPath) {
+    // load plugin module
+    include(pluginPath)
+
+    def pluginDir = project(pluginPath).projectDir.path
+    def apiDir = "${pluginDir}_api"
+
+    fileTree(apiDir).exclude("*.iml").each { it.delete() }
+
+    // copy .japi and .kapi files to api module
+    copy() {
+        from pluginDir
+        into apiDir
+        exclude '**/build/'
+        exclude '**/res/'
+
+        exclude '**/androidTest/'
+        exclude '**/test/'
+
+        include '**/*.japi'
+        include '**/*.kapi'
+    }
+    fixApiSuffix(apiDir, '.japi', '.java')
+    fixApiSuffix(apiDir, '.kapi', '.kt')
+
+//    copy() {
+//        from "${pluginDir}/src/androidTest"
+//        into "${apiDir}/src/androidTest"
+//    }
+
+    // copy apiManifest.xml from common module to api module
+    String commonDir = project(':common').projectDir.path
+    copy() {
+        from "${commonDir}/apiManifest.xml"
+        into "${apiDir}/src/main/"
+    }
+    new File("${apiDir}/src/main/apiManifest.xml").renameTo("${apiDir}/src/main/AndroidManifest.xml")
+    fixApiManifestPackageName(
+            new File("${pluginDir}/src/main/AndroidManifest.xml"),
+            new File("${apiDir}/src/main/AndroidManifest.xml")
+    )
+
+    // copy apiBuild.gradle from common module to api module
+    copy() {
+        from "${commonDir}/apiBuild.gradle"
+        into "${apiDir}/"
+    }
+    new File("${apiDir}/apiBuild.gradle").renameTo("${apiDir}/build.gradle")
+
+    deleteEmptyDir(new File(apiDir))
+
+    // load api module
+    include("${pluginPath}_api")
+}
+
+static void deleteEmptyDir(File dir) {
+    def fs = dir.listFiles()
+    if (fs == null || fs.length <= 0) {
+        dir.delete()
+    } else {
+        fs.each {
+            if (it.isDirectory()) {
+                deleteEmptyDir(it)
+            }
+        }
+    }
+}
+
+void fixApiSuffix(rootDir, String oldSuffix, String newSuffix) {
+    fileTree(rootDir).include("**/*$oldSuffix").each {
+        it.renameTo(new File(it.path.replace(oldSuffix, newSuffix)))
+    }
+}
+
+// generate dependencies gradle
+void generateSdkDependencies(String dependType, String sdkName, String... projectPaths) {
+    def libs = []
+    projectPaths.each {
+        libs += fileTree(it).include("*.aar", "*.jar")*.name
+    }
+    libs.sort(String.CASE_INSENSITIVE_ORDER)
+    def content = 'dependencies {' << ''
+    libs.each {
+        content << "\n\t" << dependType << "(name: '" << it[0..<-4] << "', ext: '" << it[-3..-1] << "')"
+    }
+    content << "\n}"
+    new File("${rootDir}/$sdkName").write(content.toString(), "UTF-8")
+}
+
+static void fixApiManifestPackageName(File pluginManifest, File apiManifest) {
+    def apiPackageName = "${new XmlParser().parse(pluginManifest).@package}.api"
+    def xml = new XmlParser().parse(apiManifest)
+    xml.@package = apiPackageName
+    XmlUtil.serialize(xml, apiManifest.newWriter("UTF-8"))
+}
+
+//generateSdkDependencies(
+//        "implementation",
+//        "sdk.gradle",
+//        "${rootDir}/CommonDependencies/antLibs", "${rootDir}/CommonDependencies/libs"
+//)
+//
+//generateSdkDependencies(
+//        "matamataImplementation",
+//        "matamataSdk.gradle",
+//        "${rootDir}/CommonDependencies/devLibs"
+//)
+
+
+include ':app'
+include ':common'
+include ':plugin_login'
+includeWithApi ':plugin_login'
+rootProject.name = "XArchitecture"

@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion androidConfig.compileSdk
+
+    defaultConfig {
+        applicationId "cc.colorcat.xarchitecture.sample"
+
+        minSdkVersion androidConfig.minSdk
+        targetSdkVersion androidConfig.targetSdk
+        versionCode androidConfig.versionCode
+        versionName androidConfig.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Required when setting minSdkVersion to 20 or lower
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility = javaCompileOptions.source
+        targetCompatibility = javaCompileOptions.target
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(path: ':common')
+    implementation project(path: ':plugin_login')
+    implementation project(path: ':plugin_login_api')
+
+    testImplementation(libraries.test.junit)
+    androidTestImplementation(libraries.test.androidJunit)
+    androidTestImplementation(libraries.test.androidEspressoCore)
+
+    implementation(libraries.android.appcompat)
+    implementation(libraries.android.lifecycleExtensions)
+    implementation(libraries.android.constraintlayout)
+    coreLibraryDesugaring(libraries.android.desugarJdk)
+
+    implementation(libraries.remote.okhttp)
+    implementation(libraries.remote.okhttpLoggingInterceptor)
+    implementation(libraries.remote.okhttpAndroidSupport)
+
+    implementation(libraries.remote.retrofit)
+    implementation(libraries.remote.retrofitConverterGson)
+
+    implementation(libraries.remote.gson)
+    implementation(libraries.remote.adapter)
+}
