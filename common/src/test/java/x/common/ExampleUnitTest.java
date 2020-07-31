@@ -5,8 +5,11 @@ import com.google.gson.reflect.TypeToken;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import x.common.component.Hummingbird;
 import x.common.component.log.Logger;
@@ -60,6 +63,19 @@ public class ExampleUnitTest {
 
     @Test
     public void genericTest() {
+//        String[] strings = {"this", "is", "a", "test"};
+//        System.out.println(Arrays.toString(strings));
+//        Arrays.sort(strings, String::compareTo);
+//        System.out.println(Arrays.toString(strings));
 
+        Comparator<File> fc = (o1, o2) -> Long.compare(o1.lastModified(), o2.lastModified());
+
+        String path = "/Users/cxx/spider/BiliBili/依缘y";
+        File dir = new File(path);
+        File[] files = dir.listFiles();
+        assert files != null;
+//        Arrays.sort(files, fc);
+        Stream.of(files).forEach(f -> System.out.println(f.lastModified()));
+//        Stream.of(files).sorted(fc).mapToLong(File::lastModified).forEach(System.out::println);
     }
 }
