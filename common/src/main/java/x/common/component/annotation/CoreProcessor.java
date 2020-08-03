@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import x.common.IClient;
-import x.common.util.Utils;
 
 
 /**
@@ -33,12 +32,12 @@ public final class CoreProcessor<T> implements AnnotationProcessor<T, Core> {
     }
 
     private static <T> T newInstance(Class<T> tClass, IClient client) throws Throwable {
-        Constructor<T> c = Utils.quietGetConstructor(tClass, IClient.class);
+        Constructor<T> c = Reflects.quietGetConstructor(tClass, IClient.class);
         if (c != null) {
             c.setAccessible(true);
             return c.newInstance(client);
         }
-        c = Utils.quietGetConstructor(tClass);
+        c = Reflects.quietGetConstructor(tClass);
         if (c != null) {
             c.setAccessible(true);
             return c.newInstance();

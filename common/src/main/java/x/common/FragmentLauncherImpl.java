@@ -13,7 +13,7 @@ import x.common.view.ContainerActivity;
  * Date: 2020-07-31
  * GitHub: https://github.com/ccolorcat
  */
-public class FragmentLauncherImpl implements FragmentLauncher {
+class FragmentLauncherImpl implements FragmentLauncher {
     @Override
     public void launch(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz, Bundle args) {
         ContainerActivity.launchFragment(context, clazz, args);

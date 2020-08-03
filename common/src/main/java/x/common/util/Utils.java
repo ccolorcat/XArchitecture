@@ -1,9 +1,7 @@
 package x.common.util;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,15 +36,6 @@ public final class Utils {
     public static <T> T requireNonNull(T obj) {
         if (obj == null) throw new NullPointerException();
         return obj;
-    }
-
-    @Nullable
-    public static <T> Constructor<T> quietGetConstructor(@NonNull Class<T> tClass, Class<?>... parameterTypes) {
-        try {
-            return tClass.getDeclaredConstructor(parameterTypes);
-        } catch (Throwable t) {
-            return null;
-        }
     }
 
     public static void sleep(@NonNull TimeUnit unit, long duration) {

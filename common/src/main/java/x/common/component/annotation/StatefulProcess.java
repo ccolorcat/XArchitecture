@@ -17,11 +17,10 @@ public final class StatefulProcess<T> implements AnnotationProcessor<T, Stateful
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull Stateful annotation, @NonNull IClient client) throws Throwable {
         Class<?> impl = annotation.value();
-//        if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) impl.newInstance();
         if (impl == Void.class || !Checker.assertImpl(tClass, impl)) {
             String className = annotation.className();
             impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
         }
-        return (T) impl.newInstance();
+        return (T) Reflects.newDefaultInstance(impl);
     }
 }

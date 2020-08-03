@@ -14,6 +14,7 @@ import x.common.component.annotation.ApiModel;
 import x.common.component.annotation.ApiModelProcessor;
 import x.common.component.annotation.Core;
 import x.common.component.annotation.CoreProcessor;
+import x.common.component.annotation.Reflects;
 import x.common.component.annotation.Stateful;
 import x.common.component.annotation.StatefulProcess;
 import x.common.component.annotation.Stateless;
@@ -99,7 +100,7 @@ public final class Hummingbird {
         Class<?> impl = sStatefulCaches.get(tClass);
         if (impl != null) {
             try {
-                return (T) impl.newInstance();
+                return (T) Reflects.newDefaultInstance(impl);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }

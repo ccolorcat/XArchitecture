@@ -1,16 +1,21 @@
 package cc.colorcat.xarchitecture.sample;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
 
-import java.util.stream.Stream;
+import java.util.concurrent.TimeUnit;
 
 import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
+import x.common.component.log.Logger;
+import x.common.component.schedule.BackgroundHandlerXScheduler;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
 
 public class MainActivity extends BaseActivity {
+    private final Logger mLogger = Logger.getLogger(this);
+
     private View.OnClickListener mClick = v -> {
         switch (v.getId()) {
             case R.id.btn_test_1:
@@ -38,9 +43,22 @@ public class MainActivity extends BaseActivity {
         );
     }
 
+    @Override
+    protected void onDestroy() {
+        Hummingbird.visit(BackgroundHandlerXScheduler.class)
+                .shutdown();
+        super.onDestroy();
+    }
+
     private void test2() {
-        Stream.of("this", "is", "a", "test")
-                .mapToInt(String::length)
-                .forEach(System.out::println);
+        Hummingbird.visit(BackgroundHandlerXScheduler.class)
+                .scheduleWithFixedDelay(new Runnable() {
+                    private int count = 0;
+
+                    @Override
+                    public void run() {
+                        mLogger.v("BackgroundHandlerXScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
+                    }
+                }, 2, 3, TimeUnit.SECONDS);
     }
 }

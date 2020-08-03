@@ -27,12 +27,7 @@ public final class StatelessProcessor<T> implements AnnotationProcessor<T, State
                 String className = annotation.className();
                 impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
             }
-//            result = (impl != Void.class && Checker.assertImpl(tClass, impl)) ? impl.newInstance() : tClass.newInstance();
-
-//            Constructor<?> constructor = impl.getDeclaredConstructor();
-//            constructor.setAccessible(true);
-//            result = constructor.newInstance();
-            result = impl.newInstance();
+            result = Reflects.newDefaultInstance(impl);
             mCaches.put(tClass, result);
         }
         return (T) result;

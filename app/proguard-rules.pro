@@ -27,7 +27,7 @@
 
 
 
-
+# -------- OkHttp --------
 # JSR 305 annotations are for embedding nullability information.
 -dontwarn javax.annotation.**
 
@@ -42,7 +42,7 @@
 
 
 
-
+# -------- Retrifit --------
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
 # EnclosingMethod is required to use InnerClasses.
 -keepattributes Signature, InnerClasses, EnclosingMethod
@@ -77,4 +77,13 @@
 
 # custome
 #-keep class x.common.component.annotation.ApiModel{ *;}
-#-keep @x.common.component.annotation.ApiModel class*{ *;}
+#-keep @x.common.component.annotation.* class * {*;}
+-keep class * implements @x.common.component.annotation.* * {*;}
+
+#-keepclassmembers,allowshrinking,allowobfuscation interface * {
+#    @x.common.component.annotation.* <methods>;
+#}
+
+#-keep class * implements * {
+#    @x.common.component.annotation.* <methods>, <init>;
+#}
