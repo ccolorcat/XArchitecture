@@ -7,7 +7,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 
 import x.common.component.XLruCache;
 import x.common.component.log.Logger;
@@ -19,14 +18,15 @@ import x.common.component.log.Logger;
  * GitHub: https://github.com/ccolorcat
  */
 final class StoreHandler implements InvocationHandler {
-    private final Logger logger = Logger.getLogger(this);
     private final XLruCache<Method, StoreExecutor> cachedExecutors = new XLruCache<>(16);
     private final Store store;
     private final StoreSerializer serializer;
+    private final boolean loggable;
 
-    StoreHandler(@NonNull Store store, @NonNull StoreSerializer serializer) {
+    StoreHandler(@NonNull Store store, @NonNull StoreSerializer serializer, boolean loggable) {
         this.store = store;
         this.serializer = serializer;
+        this.loggable = loggable;
     }
 
     @Override
@@ -35,8 +35,8 @@ final class StoreHandler implements InvocationHandler {
         if (executor == null) {
             executor = parse(method, args);
             cachedExecutors.put(method, executor);
-        } else {
-            logger.d("hit cached StoreExecutor: " + method + ", " + executor);
+        } else if (loggable) {
+            Logger.getLogger("Hummingbird").v("hit cached StoreExecutor: " + method + '=' + executor);
         }
         return executor.execute(args);
     }
@@ -134,18 +134,9 @@ final class StoreHandler implements InvocationHandler {
     private static <T extends Annotation> T search(Annotation[] annotations, Class<T> tClass) {
         for (Annotation annotation : annotations) {
             if (tClass.isInstance(annotation)) {
-                Logger.getLogger("StoreHandler").v("found " + annotation);
                 return (T) annotation;
             }
         }
         return null;
-    }
-
-    private static <T> String toString(T[][] tss) {
-        StringBuilder builder = new StringBuilder();
-        for (T[] ts : tss) {
-            builder.append('[').append(Arrays.toString(ts)).append("]  ");
-        }
-        return builder.toString();
     }
 }

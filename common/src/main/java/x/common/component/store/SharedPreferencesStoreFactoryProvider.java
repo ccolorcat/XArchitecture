@@ -17,6 +17,7 @@ final class SharedPreferencesStoreFactoryProvider extends BaseStoreFactoryProvid
     private final Context context;
 
     private SharedPreferencesStoreFactoryProvider(@NonNull IClient client) {
+        super(client);
         context = ((IAppClient) client).getApplication();
     }
 

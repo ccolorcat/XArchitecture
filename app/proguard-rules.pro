@@ -78,7 +78,8 @@
 # custome
 #-keep class x.common.component.annotation.ApiModel{ *;}
 #-keep @x.common.component.annotation.* class * {*;}
--keep class * implements @x.common.component.annotation.* * {*;}
+-keep, allowobfuscation class * implements @x.common.component.annotation.* * {*;}
+#-keep class * implements @x.common.component.annotation.* * {*;}
 
 #-keepclassmembers,allowshrinking,allowobfuscation interface * {
 #    @x.common.component.annotation.* <methods>;

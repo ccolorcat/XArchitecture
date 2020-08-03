@@ -25,11 +25,11 @@ import x.common.util.Utils;
  */
 public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
     private final Cache cache;
-    private final boolean isTest;
+    private final boolean loggable;
 
     public ApiFactoryProviderImpl(@NonNull IClient client) {
         this.cache = makeCache(client);
-        this.isTest = client.isTest();
+        this.loggable = client.isTest();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
         if (cache != null) builder.cache(cache);
-        if (isTest) {
+        if (loggable) {
             builder.addInterceptor(createLoggingInterceptor())
                     .addInterceptor(new DelayInterceptor());
         }

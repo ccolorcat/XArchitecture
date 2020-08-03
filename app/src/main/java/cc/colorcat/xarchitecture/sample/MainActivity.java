@@ -19,12 +19,13 @@ public class MainActivity extends BaseActivity {
     private View.OnClickListener mClick = v -> {
         switch (v.getId()) {
             case R.id.btn_test_1:
-                Hummingbird.visit(LoginNavigation.class).launch(MainActivity.this);
+                test1();
                 break;
             case R.id.btn_test_2:
                 test2();
                 break;
             case R.id.btn_test_3:
+                test3();
                 break;
             default:
                 break;
@@ -50,6 +51,10 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    private void test1() {
+        Hummingbird.visit(LoginNavigation.class).launch(MainActivity.this);
+    }
+
     private void test2() {
         Hummingbird.visit(BackgroundHandlerXScheduler.class)
                 .scheduleWithFixedDelay(new Runnable() {
@@ -60,5 +65,14 @@ public class MainActivity extends BaseActivity {
                         mLogger.v("BackgroundHandlerXScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
                     }
                 }, 2, 3, TimeUnit.SECONDS);
+    }
+
+    private void test3() {
+        PersonStore store = Hummingbird.visit(PersonStore.class);
+        Person person = new Person("orange", 2);
+        store.save(person);
+        mLogger.v("clear: " + store.clear());
+        mLogger.v("read: " + store.read());
+        mLogger.v("remove: " + store.remove());
     }
 }
