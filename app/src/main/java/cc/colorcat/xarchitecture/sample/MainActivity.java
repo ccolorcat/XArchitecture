@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
 import x.common.component.log.Logger;
 import x.common.component.schedule.BackgroundHandlerXScheduler;
+import x.common.component.schedule.MainXScheduler;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
 
@@ -55,24 +57,23 @@ public class MainActivity extends BaseActivity {
         Hummingbird.visit(LoginNavigation.class).launch(MainActivity.this);
     }
 
-    private void test2() {
-        Hummingbird.visit(BackgroundHandlerXScheduler.class)
-                .scheduleWithFixedDelay(new Runnable() {
-                    private int count = 0;
+    private Future<?> mFuture;
 
-                    @Override
-                    public void run() {
-                        mLogger.v("BackgroundHandlerXScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
-                    }
-                }, 2, 3, TimeUnit.SECONDS);
+    private Runnable mRunnable = new Runnable() {
+        private int count = 0;
+
+        @Override
+        public void run() {
+            mLogger.v("BackgroundHandlerXScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
+        }
+    };
+
+    private void test2() {
+       mFuture = Hummingbird.visit(MainXScheduler.class)
+                .scheduleWithFixedDelay(mRunnable, 2, 1, TimeUnit.SECONDS);
     }
 
     private void test3() {
-        PersonStore store = Hummingbird.visit(PersonStore.class);
-        Person person = new Person("orange", 2);
-        store.save(person);
-        mLogger.v("clear: " + store.clear());
-        mLogger.v("read: " + store.read());
-        mLogger.v("remove: " + store.remove());
+        Hummingbird.visit(MainXScheduler.class).remove((Runnable) mFuture);
     }
 }

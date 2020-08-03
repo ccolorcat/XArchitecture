@@ -79,6 +79,8 @@
 #-keep class x.common.component.annotation.ApiModel{ *;}
 #-keep @x.common.component.annotation.* class * {*;}
 -keep, allowobfuscation class * implements @x.common.component.annotation.* * {*;}
+-keep class * implements @x.common.component.annotation.Stateful * {*;}
+-keep class * implements @x.common.component.annotation.Stateless * {*;}
 #-keep class * implements @x.common.component.annotation.* * {*;}
 
 #-keepclassmembers,allowshrinking,allowobfuscation interface * {

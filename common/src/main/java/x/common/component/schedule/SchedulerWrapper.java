@@ -35,13 +35,13 @@ public class SchedulerWrapper implements XScheduler {
     }
 
     @Override
-    public void execute(@NonNull Runnable runnable) {
-        executor.execute(runnable);
+    public void remove(@NonNull Runnable task) {
+        executor.remove(task);
     }
 
     @Override
-    public void executeDelay(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
-        executor.schedule(runnable, delay, unit);
+    public void execute(@NonNull Runnable runnable) {
+        executor.execute(runnable);
     }
 
     @Override

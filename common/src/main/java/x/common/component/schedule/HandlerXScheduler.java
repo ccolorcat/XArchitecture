@@ -68,6 +68,11 @@ class HandlerXScheduler implements XScheduler {
     }
 
     @Override
+    public void remove(@NonNull Runnable task) {
+        handler.get().removeCallbacks(task);
+    }
+
+    @Override
     protected void finalize() throws Throwable {
         try {
             shutdown();
@@ -84,12 +89,6 @@ class HandlerXScheduler implements XScheduler {
         } else {
             handler.get().post(runnable);
         }
-    }
-
-    @Override
-    public void executeDelay(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
-        Utils.requireNonNull(runnable, "runnable == null");
-        handler.get().postDelayed(runnable, unit.toMillis(delay));
     }
 
     @NonNull

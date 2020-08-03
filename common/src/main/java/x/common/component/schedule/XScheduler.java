@@ -17,9 +17,9 @@ public interface XScheduler {
 
     boolean isShutdown();
 
-    void execute(@NonNull Runnable runnable);
+    void remove(@NonNull Runnable task);
 
-    void executeDelay(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit);
+    void execute(@NonNull Runnable runnable);
 
     default <V> Future<V> submit(@NonNull Callable<V> callable) {
         return schedule(callable, 0L, TimeUnit.MILLISECONDS);
