@@ -2,7 +2,11 @@ package x.common.util;
 
 import androidx.annotation.NonNull;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
+
+import x.common.component.log.Logger;
 
 /**
  * Author: cxx
@@ -10,6 +14,23 @@ import java.util.concurrent.TimeUnit;
  * GitHub: https://github.com/ccolorcat
  */
 public final class Utils {
+    public static String checkedUrl(@NonNull String url) {
+        if (!url.toLowerCase().matches("^(http)(s)?://(\\S)+")) {
+            throw new IllegalArgumentException("Bad url = " + url + ", the scheme must be http or https");
+        }
+        return url;
+    }
+
+    public static long quiteToLong(String number, long defaultValue) {
+        if (isEmpty(number)) return defaultValue;
+        try {
+            return Long.parseLong(number);
+        } catch (Throwable e) {
+            Logger.getDefault().e(e);
+        }
+        return defaultValue;
+    }
+
     public static <T> T nullElse(T value, T defaultValue) {
         return value != null ? value : defaultValue;
     }
@@ -47,6 +68,24 @@ public final class Utils {
             Thread.sleep(millis);
         } catch (Throwable ignore) {
         }
+    }
+
+    public static String md5(@NonNull String input) {
+        String result = requireNonNull(input, "input == null");
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.reset();
+            md.update(input.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder(bytes.length << 1);
+            for (byte b : bytes) {
+                sb.append(Character.forDigit((b & 0xf0) >> 4, 16))
+                        .append(Character.forDigit(b & 0x0f, 16));
+            }
+            result = sb.toString();
+        } catch (NoSuchAlgorithmException ignore) {
+        }
+        return result;
     }
 
     private Utils() {

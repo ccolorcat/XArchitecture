@@ -52,4 +52,7 @@ dependencies {
 
     implementation(libraries.remote.gson)
     implementation(libraries.remote.adapter)
+
+    implementation(libraries.remote.glide)
+    annotationProcessor(libraries.remote.glideCompiler)
 }

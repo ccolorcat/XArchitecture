@@ -2,6 +2,8 @@ package x.common;
 
 import androidx.annotation.NonNull;
 
+import java.io.File;
+
 /**
  * Author: cxx
  * Date: 2020-07-21
@@ -10,6 +12,8 @@ import androidx.annotation.NonNull;
 public interface IClient {
     @NonNull
     String getBaseUrl();
+
+    File getCacheDir();
 
     boolean isTest();
 }

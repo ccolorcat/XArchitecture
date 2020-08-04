@@ -1,7 +1,5 @@
 package x.common.component.finder;
 
-import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,17 +12,18 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import x.common.component.log.Logger;
+import x.common.component.schedule.XScheduler;
 import x.common.util.Utils;
 
 /**
@@ -36,13 +35,13 @@ final class DiskCache {
     private static final Pattern LEGAL_KEY_PATTERN = Pattern.compile("[.a-z0-9_-]{1,64}");
 
     @NonNull
-    static DiskCache open(@NonNull ThreadPoolExecutor executor, @NonNull File directory, long maxSize) throws IOException {
-        Utils.requireNonNull(executor, "executor == null");
+    static DiskCache open(@NonNull XScheduler scheduler, @NonNull File directory, long maxSize) throws IOException {
+        Utils.requireNonNull(scheduler, "scheduler == null");
         if (maxSize <= 0L) throw new IllegalArgumentException("maxSize <= 0L");
         if (directory.isFile()) throw new IOException(directory + " is not a directory");
         synchronized (DiskCache.class) {
             if (directory.exists() || directory.mkdirs()) {
-                DiskCache cache = new DiskCache(executor, directory, maxSize);
+                DiskCache cache = new DiskCache(scheduler, directory, maxSize);
                 cache.cleanDirtyFiles();
                 cache.readSnapshots();
                 cache.asyncTrimToSize();
@@ -57,7 +56,7 @@ final class DiskCache {
 
     private final long maxSize;
     private long size;
-    private final ThreadPoolExecutor executor;
+    private final XScheduler scheduler;
 
     private final Callable<Void> cleanupCallable = new Callable<Void>() {
         @Override
@@ -69,8 +68,8 @@ final class DiskCache {
         }
     };
 
-    private DiskCache(@NonNull ThreadPoolExecutor executor, @NonNull File directory, long maxSize) {
-        this.executor = executor;
+    private DiskCache(@NonNull XScheduler scheduler, @NonNull File directory, long maxSize) {
+        this.scheduler = scheduler;
         this.directory = directory;
         this.maxSize = maxSize;
         this.snapshots = new LinkedHashMap<>(0, 0.75F, true);
@@ -161,15 +160,13 @@ final class DiskCache {
 
     private void asyncTrimToSize() {
         if (size > maxSize) {
-            executor.submit(cleanupCallable);
+            scheduler.submit(cleanupCallable);
         }
     }
 
     private void trimToSize(long maxSize) throws IOException {
         Iterator<Map.Entry<String, Snapshot>> iterator = snapshots.entrySet().iterator();
         while (size > maxSize && iterator.hasNext()) {
-//            Map.Entry<String, Snapshot> toEvict = iterator.next();
-//            Snapshot value = toEvict.getValue();
             Snapshot toEvict = iterator.next().getValue();
             if (toEvict.readCount == 0 && !toEvict.writing) {
                 File clean = toEvict.getCleanFile();
@@ -198,8 +195,8 @@ final class DiskCache {
         }
 
         @NonNull
-        Uri getUri() {
-            return Uri.fromFile(getCleanFile());
+        URI getUri() {
+            return getCleanFile().toURI();
         }
 
         @Nullable

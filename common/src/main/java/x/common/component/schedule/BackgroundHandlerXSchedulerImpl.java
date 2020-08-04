@@ -8,7 +8,7 @@ import android.os.HandlerThread;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-final class BackgroundHandlerXSchedulerImpl extends HandlerXScheduler implements BackgroundHandlerXScheduler {
+final class BackgroundHandlerXSchedulerImpl extends HandlerXSchedulerImpl implements BackgroundHandlerXScheduler {
     BackgroundHandlerXSchedulerImpl() {
         HandlerThread ht = new HandlerThread("background-scheduler");
         ht.setDaemon(true);

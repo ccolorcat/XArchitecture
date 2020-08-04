@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+import x.common.IClient;
 import x.common.component.store.BaseStoreFactoryProvider;
 import x.common.component.store.Store;
 
@@ -15,6 +16,10 @@ import x.common.component.store.Store;
  * GitHub: https://github.com/ccolorcat
  */
 final class TestStoreFactoryProvider extends BaseStoreFactoryProvider {
+    protected TestStoreFactoryProvider(@NonNull IClient client) {
+        super(client);
+    }
+
     @NonNull
     @Override
     protected Store newStore(String name) {

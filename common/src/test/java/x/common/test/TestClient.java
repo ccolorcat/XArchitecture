@@ -2,6 +2,8 @@ package x.common.test;
 
 import androidx.annotation.NonNull;
 
+import java.io.File;
+
 import x.common.IClient;
 
 /**
@@ -14,6 +16,11 @@ final class TestClient implements IClient {
     @Override
     public String getBaseUrl() {
         return "https://www.google.com/";
+    }
+
+    @Override
+    public File getCacheDir() {
+        return new File(System.getProperty("user.home"), "cache");
     }
 
     @Override

@@ -8,7 +8,7 @@ import android.os.Looper;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-class AndroidMainXScheduler extends HandlerXScheduler implements MainXScheduler {
+class AndroidMainXScheduler extends HandlerXSchedulerImpl implements MainXScheduler {
     AndroidMainXScheduler() {
         super(new Handler(Looper.getMainLooper()));
     }

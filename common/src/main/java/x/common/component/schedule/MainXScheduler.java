@@ -9,5 +9,5 @@ import x.common.component.annotation.Core;
  * GitHub: https://github.com/ccolorcat
  */
 @Core(AndroidMainXScheduler.class)
-public interface MainXScheduler extends XScheduler {
+public interface MainXScheduler extends HandlerXScheduler {
 }

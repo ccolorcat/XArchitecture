@@ -5,13 +5,15 @@ import com.google.gson.reflect.TypeToken;
 
 import org.junit.Test;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import x.common.component.Hummingbird;
+import x.common.component.finder.DownloadWriter;
+import x.common.component.finder.FileOperator;
+import x.common.component.finder.Filename;
+import x.common.component.finder.FinderCore;
+import x.common.component.finder.Module;
 import x.common.component.log.Logger;
 import x.common.test.TestManager;
 
@@ -62,20 +64,18 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testFinderCore() {
+        String url = "https://dldir1.qq.com/weixin/mac/WeChatMac.dmg";
+        FinderCore core = Hummingbird.visit(FinderCore.class);
+        FileOperator operator = core.requireFileOperator(Module.ALBUM, "001", Filename.fromUri(url));
+        Logger.getDefault().v("path: " + operator.getUri());
+        boolean result = operator.quietWrite(url, DownloadWriter.of((finished, total, percent) ->
+                Logger.getDefault().v("finished: %d, total: %d, percent: %d", finished, total, percent))
+        );
+//        assertTrue(result);
+    }
+
+    @Test
     public void genericTest() {
-//        String[] strings = {"this", "is", "a", "test"};
-//        System.out.println(Arrays.toString(strings));
-//        Arrays.sort(strings, String::compareTo);
-//        System.out.println(Arrays.toString(strings));
-
-        Comparator<File> fc = (o1, o2) -> Long.compare(o1.lastModified(), o2.lastModified());
-
-        String path = "/Users/cxx/spider/BiliBili/依缘y";
-        File dir = new File(path);
-        File[] files = dir.listFiles();
-        assert files != null;
-//        Arrays.sort(files, fc);
-        Stream.of(files).forEach(f -> System.out.println(f.lastModified()));
-//        Stream.of(files).sorted(fc).mapToLong(File::lastModified).forEach(System.out::println);
     }
 }

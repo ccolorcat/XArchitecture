@@ -9,5 +9,5 @@ import x.common.component.annotation.Core;
  * GitHub: https://github.com/ccolorcat
  */
 @Core(BackgroundHandlerXSchedulerImpl.class)
-public interface BackgroundHandlerXScheduler extends XScheduler {
+public interface BackgroundHandlerXScheduler extends HandlerXScheduler {
 }

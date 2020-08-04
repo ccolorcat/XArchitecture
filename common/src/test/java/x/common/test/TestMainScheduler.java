@@ -13,4 +13,9 @@ final class TestMainScheduler extends SchedulerWrapper implements MainXScheduler
     protected TestMainScheduler() {
         super(1);
     }
+
+    @Override
+    public void removeAll() {
+
+    }
 }

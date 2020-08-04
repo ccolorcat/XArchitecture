@@ -10,8 +10,7 @@ import java.util.concurrent.TimeUnit;
 import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
 import x.common.component.log.Logger;
-import x.common.component.schedule.BackgroundHandlerXScheduler;
-import x.common.component.schedule.MainXScheduler;
+import x.common.component.schedule.IoXScheduler;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
 
@@ -48,8 +47,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        Hummingbird.visit(BackgroundHandlerXScheduler.class)
-                .shutdown();
         super.onDestroy();
     }
 
@@ -64,16 +61,16 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void run() {
-            mLogger.v("BackgroundHandlerXScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
+            mLogger.v("XScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
         }
     };
 
     private void test2() {
-       mFuture = Hummingbird.visit(MainXScheduler.class)
+        mFuture = Hummingbird.visit(IoXScheduler.class)
                 .scheduleWithFixedDelay(mRunnable, 2, 1, TimeUnit.SECONDS);
     }
 
     private void test3() {
-        Hummingbird.visit(MainXScheduler.class).remove((Runnable) mFuture);
+        Hummingbird.visit(IoXScheduler.class).remove((Runnable) mFuture);
     }
 }
