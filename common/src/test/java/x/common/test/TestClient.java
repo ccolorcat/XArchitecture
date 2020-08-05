@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 
+import x.common.IAppClient;
 import x.common.IClient;
 
 /**
@@ -26,5 +27,10 @@ final class TestClient implements IClient {
     @Override
     public boolean isTest() {
         return true;
+    }
+
+    @Override
+    public IAppClient asAppClient() {
+        throw new UnsupportedOperationException("do not cast to IAppClient");
     }
 }

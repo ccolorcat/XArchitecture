@@ -1,5 +1,7 @@
 package x.common;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import x.common.component.Hummingbird;
+import x.common.component.core.AccountCore;
+import x.common.component.core.AccountState;
 import x.common.component.finder.DownloadWriter;
 import x.common.component.finder.FileOperator;
 import x.common.component.finder.Filename;
@@ -77,5 +81,14 @@ public class ExampleUnitTest {
 
     @Test
     public void genericTest() {
+        AccountCore core = Hummingbird.visit(AccountCore.class);
+        core.register(new SingleXObservable.Listener<AccountState>() {
+            @Override
+            public void onChanged(@NonNull AccountState accountState) {
+                LOGGER.v("AccountCore.onChanged: " + accountState);
+            }
+        });
+        core.login();
+        core.logout();
     }
 }

@@ -1,7 +1,7 @@
 package x.common.component.core;
 
 
-import x.common.component.AutoRegistrable;
+import x.common.component.XObservable;
 import x.common.component.annotation.Core;
 
 /**
@@ -11,5 +11,5 @@ import x.common.component.annotation.Core;
  */
 @SuppressWarnings("UnusedReturnValue, unused")
 @Core(AppCoreImpl.class)
-public interface AppCore extends AutoRegistrable<AppStateListener> {
+public interface AppCore extends XObservable<AppState> {
 }

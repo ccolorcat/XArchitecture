@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +34,10 @@ public class AndroidUtils {
             return true;
         }
         return false;
+    }
+
+    public static <T> T getSystemService(@NonNull Context context, Class<T> serviceClass) {
+        return ContextCompat.getSystemService(context, serviceClass);
     }
 
     public static void configAlarmManager(AlarmManager manager, PendingIntent pi, long delay, TimeUnit unit) {

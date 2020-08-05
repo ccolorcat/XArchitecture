@@ -16,4 +16,6 @@ public interface IClient {
     File getCacheDir();
 
     boolean isTest();
+
+    IAppClient asAppClient();
 }

@@ -7,9 +7,9 @@ import android.view.View;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
 import x.common.component.log.Logger;
+import x.common.component.monitor.NetworkMonitor;
 import x.common.component.schedule.IoXScheduler;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
@@ -51,7 +51,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void test1() {
-        Hummingbird.visit(LoginNavigation.class).launch(MainActivity.this);
+        Hummingbird.visit(NetworkMonitor.class)
+                .bind(true, this, (available) -> mLogger.d("network changed: " + available));
     }
 
     private Future<?> mFuture;

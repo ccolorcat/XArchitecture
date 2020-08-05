@@ -15,6 +15,11 @@ import java.io.File;
  */
 public interface IAppClient extends IClient, ViewModelStoreOwner {
     @Override
+    default IAppClient asAppClient() {
+        return this;
+    }
+
+    @Override
     default File getCacheDir() {
         return getApplication().getCacheDir();
     }
