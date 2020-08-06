@@ -29,7 +29,7 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
 
     public ApiFactoryProviderImpl(@NonNull IClient client) {
         this.cache = makeCache(client);
-        this.loggable = client.isTest();
+        this.loggable = client.loggable();
     }
 
     @Override

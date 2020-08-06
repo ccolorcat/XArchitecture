@@ -18,17 +18,17 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 public class ContainerActivity extends BaseActivity {
-    private static final String KEY_FRAGMENT_CLASS = "class.fragment.key";
-    private static final String KEY_FRAGMENT_ARGS = "args.fragment.key";
+    private static final String KEY_CLASS = "class.fragment.key";
+    private static final String KEY_ARGS = "args.fragment.key";
 
-    public static void launchFragment(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz) {
-        launchFragment(context, clazz, null);
+    public static void launch(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz) {
+        launch(context, clazz, null);
     }
 
-    public static void launchFragment(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz, Bundle args) {
+    public static void launch(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz, Bundle args) {
         Intent intent = new Intent(context, ContainerActivity.class);
-        intent.putExtra(KEY_FRAGMENT_CLASS, Utils.requireNonNull(clazz, "clazz == null"));
-        if (args != null) intent.putExtra(KEY_FRAGMENT_ARGS, args);
+        intent.putExtra(KEY_CLASS, Utils.requireNonNull(clazz, "clazz == null"));
+        if (args != null) intent.putExtra(KEY_ARGS, args);
         AndroidUtils.safeStartActivity(context, intent);
     }
 
@@ -45,20 +45,20 @@ public class ContainerActivity extends BaseActivity {
 
     @SuppressWarnings("unchecked")
     private static Class<? extends BaseFragment> getFragmentClass(Intent intent) {
-        return (Class<? extends BaseFragment>) Utils.requireNonNull(intent.getSerializableExtra(KEY_FRAGMENT_CLASS));
+        return (Class<? extends BaseFragment>) Utils.requireNonNull(intent.getSerializableExtra(KEY_CLASS));
     }
 
     private static Bundle getArgs(Intent intent) {
-        return intent.getBundleExtra(KEY_FRAGMENT_ARGS);
+        return intent.getBundleExtra(KEY_ARGS);
     }
 
     private BaseFragment create() {
         try {
             Intent intent = getIntent();
-            Class<?> clazz = (Class<?>) intent.getSerializableExtra(KEY_FRAGMENT_CLASS);
-            Utils.requireNonNull(clazz, "missing class by key " + KEY_FRAGMENT_CLASS);
+            Class<?> clazz = (Class<?>) intent.getSerializableExtra(KEY_CLASS);
+            Utils.requireNonNull(clazz, "missing class by key " + KEY_CLASS);
             BaseFragment fragment = (BaseFragment) clazz.newInstance();
-            Bundle args = intent.getBundleExtra(KEY_FRAGMENT_ARGS);
+            Bundle args = intent.getBundleExtra(KEY_ARGS);
             if (args != null) fragment.setArguments(args);
             return fragment;
         } catch (Throwable e) {

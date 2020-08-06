@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import x.common.IAppClient;
 import x.common.IClient;
 
 
@@ -18,7 +17,7 @@ final class SharedPreferencesStoreFactoryProvider extends BaseStoreFactoryProvid
 
     private SharedPreferencesStoreFactoryProvider(@NonNull IClient client) {
         super(client);
-        context = ((IAppClient) client).getApplication();
+        context = client.asAppClient().getApplication();
     }
 
     @NonNull

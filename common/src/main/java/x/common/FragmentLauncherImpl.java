@@ -16,6 +16,6 @@ import x.common.view.ContainerActivity;
 class FragmentLauncherImpl implements FragmentLauncher {
     @Override
     public void launch(@NonNull Context context, @NonNull Class<? extends BaseFragment> clazz, Bundle args) {
-        ContainerActivity.launchFragment(context, clazz, args);
+        ContainerActivity.launch(context, clazz, args);
     }
 }

@@ -69,7 +69,7 @@ public final class Hummingbird {
         if (result == null) {
             result = byAnnotationProcessor(tClass);
             sCaches.put(tClass, result);
-        } else if (sClient.get().isTest()) {
+        } else if (sClient.get().loggable()) {
             Logger.getLogger("Hummingbird").v("hit cached: " + tClass.getName() + '=' + result.getClass().getName());
         }
         return result;

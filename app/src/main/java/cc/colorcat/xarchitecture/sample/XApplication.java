@@ -40,7 +40,7 @@ public class XApplication extends Application implements IAppClient {
     }
 
     @Override
-    public boolean isTest() {
+    public boolean loggable() {
         return BuildConfig.DEBUG;
     }
 

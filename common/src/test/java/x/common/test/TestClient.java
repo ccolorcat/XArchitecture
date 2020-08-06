@@ -26,7 +26,7 @@ final class TestClient implements IClient {
     }
 
     @Override
-    public boolean isTest() {
+    public boolean loggable() {
         return true;
     }
 

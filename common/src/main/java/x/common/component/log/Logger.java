@@ -36,7 +36,7 @@ public class Logger {
 
     static {
         IClient client = Hummingbird.getClient();
-        sThreshold = client.isTest() ? ALL : NONE;
+        sThreshold = client.loggable() ? ALL : NONE;
         sPrinter = Hummingbird.visit(LogPrinter.class);
     }
 

@@ -45,7 +45,7 @@ public abstract class BaseStoreFactoryProvider implements StoreFactoryProvider {
                 return (T) Proxy.newProxyInstance(
                         tClass.getClassLoader(),
                         new Class[]{tClass},
-                        new StoreHandler(newStore(name), serializer, client.isTest())
+                        new StoreHandler(newStore(name), serializer, client.loggable())
                 );
             }
         };

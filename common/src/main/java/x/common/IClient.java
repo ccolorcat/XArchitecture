@@ -19,7 +19,7 @@ public interface IClient {
     @NonNull
     File filesDir();
 
-    boolean isTest();
+    boolean loggable();
 
     IAppClient asAppClient();
 }
