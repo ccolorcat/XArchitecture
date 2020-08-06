@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import cc.colorcat.login.R;
 import cc.colorcat.login.contract.ILogin;
 import x.common.component.Lazy;
+import x.common.component.loader.ObjectLoader;
 import x.common.component.log.Logger;
 import x.common.view.BaseFragment;
 import x.common.view.XHolder;
@@ -34,6 +35,11 @@ public class LoginFragment extends BaseFragment implements ILogin.View {
         holder.setClick(R.id.confirm, (v) -> {
             mPresenter.get().handleLogin(holder.getString(R.id.username), holder.getString(R.id.password));
         });
+        ObjectLoader.with(this)
+                .load("https://i0.hdslb.com/bfs/album/8d5baf53a12b8c2ac81dcb8e28385b79cb07459a.jpg")
+                .asImage()
+                .circleCrop()
+                .into(holder.get(R.id.iv_avatar));
     }
 
     @Override
