@@ -11,7 +11,6 @@ import java.net.URI;
  * Date: 2020-04-15
  */
 public interface FileOperator extends DataOperator {
-    @Deprecated
     @NonNull
     URI getUri();
 

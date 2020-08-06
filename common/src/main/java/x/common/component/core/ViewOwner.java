@@ -1,4 +1,4 @@
-package x.common.component;
+package x.common.component.core;
 
 import androidx.annotation.NonNull;
 

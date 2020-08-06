@@ -82,7 +82,7 @@ final class ProgressInputStream extends FilterInputStream {
         int currentPercent = (int) (finished * 100L / contentLength);
         if (currentPercent > lastPercent) {
             lastPercent = currentPercent;
-            listener.onChanged(finished, contentLength, currentPercent);
+            listener.onProgress(finished, contentLength, currentPercent);
         }
     }
 }

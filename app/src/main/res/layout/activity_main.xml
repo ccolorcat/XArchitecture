@@ -9,10 +9,16 @@
     android:padding="16dp"
     tools:ignore="HardcodedText">
 
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="128dp"
+        android:layout_height="128dp" />
+
     <Button
         android:id="@+id/btn_test_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="test 1" />
 
     <Button

@@ -32,7 +32,7 @@ final class FinderCoreImpl implements FinderCore {
 
     // TODO: 2020/8/4 需考虑用户切换账户登录等情况，故需要每次都对 Finder 的路径进行检查，另需要添加 uid, oid 作为子路径。
     private File getRootDir() {
-        return Finder.getPath(client.getCacheDir(), "finder");
+        return Finder.getPath(client.filesDir(), "finder");
     }
 
     private void update() {

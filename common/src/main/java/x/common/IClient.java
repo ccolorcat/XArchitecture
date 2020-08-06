@@ -13,7 +13,11 @@ public interface IClient {
     @NonNull
     String getBaseUrl();
 
-    File getCacheDir();
+    @NonNull
+    File cacheDir();
+
+    @NonNull
+    File filesDir();
 
     boolean isTest();
 

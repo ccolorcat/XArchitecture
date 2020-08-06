@@ -26,5 +26,5 @@ public interface ProgressListener {
      * @param total    总大小
      * @param percent  已完成 / 总大小，取值范围 [1, 100]
      */
-    void onChanged(long finished, long total, int percent);
+    void onProgress(long finished, long total, int percent);
 }

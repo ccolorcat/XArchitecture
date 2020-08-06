@@ -8,7 +8,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import x.common.component.Hummingbird;
-import x.common.component.ViewOwner;
+import x.common.component.core.ViewOwner;
 import x.common.view.LoadingController;
 import x.common.view.ShowableController;
 

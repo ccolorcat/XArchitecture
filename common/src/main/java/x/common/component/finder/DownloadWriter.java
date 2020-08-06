@@ -109,8 +109,8 @@ public class DownloadWriter implements DataWriter<String> {
         }
 
         @Override
-        public void onChanged(long finished, long total, int percent) {
-            scheduler.execute(() -> listener.onChanged(finished, total, percent));
+        public void onProgress(long finished, long total, int percent) {
+            scheduler.execute(() -> listener.onProgress(finished, total, percent));
         }
     }
 }

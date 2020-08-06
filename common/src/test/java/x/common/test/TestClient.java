@@ -19,8 +19,9 @@ final class TestClient implements IClient {
         return "https://www.google.com/";
     }
 
+    @NonNull
     @Override
-    public File getCacheDir() {
+    public File cacheDir() {
         return new File(System.getProperty("user.home"), "cache");
     }
 

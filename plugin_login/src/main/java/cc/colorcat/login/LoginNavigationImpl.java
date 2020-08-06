@@ -13,7 +13,7 @@ import x.common.component.Hummingbird;
  * Date: 2020-07-31
  * GitHub: https://github.com/ccolorcat
  */
-public class LoginNavigationImpl implements LoginNavigation {
+final class LoginNavigationImpl implements LoginNavigation {
     @Override
     public void launch(@NonNull Context context) {
         Hummingbird.visit(FragmentLauncher.class).launch(context, LoginFragment.class);
