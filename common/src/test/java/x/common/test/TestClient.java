@@ -25,6 +25,12 @@ final class TestClient implements IClient {
         return new File(System.getProperty("user.home"), "cache");
     }
 
+    @NonNull
+    @Override
+    public File filesDir() {
+        return new File(System.getProperty("user.home"), "files");
+    }
+
     @Override
     public boolean loggable() {
         return true;

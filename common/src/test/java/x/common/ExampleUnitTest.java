@@ -1,12 +1,11 @@
 package x.common;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import x.common.component.Hummingbird;
 import x.common.component.finder.DownloadWriter;
@@ -15,9 +14,11 @@ import x.common.component.finder.Filename;
 import x.common.component.finder.FinderCore;
 import x.common.component.finder.Module;
 import x.common.component.log.Logger;
+import x.common.component.schedule.IoXScheduler;
 import x.common.test.TestManager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    private static final Gson GSON = new Gson();
+    private static final Object LOCK = new Object();
     private static final Logger LOGGER;
 
     static {
@@ -40,12 +41,11 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testGson() {
-        List<Person> persons = new ArrayList<>();
-        persons.add(new Person("John", 34, true));
-        persons.add(new Child("Tom", 3, true));
-        System.out.println(GSON.toJson(persons));
-        System.out.println(new TypeToken<ArrayList<Person>>() {}.getType());
+    public void testApiModel() throws IOException {
+        TestApiModel model = Hummingbird.visit(TestApiModel.class);
+        String result = model.search("测试").execute();
+        LOGGER.v(result);
+        assertNotNull(result);
     }
 
     @Test
@@ -72,11 +72,34 @@ public class ExampleUnitTest {
         boolean result = operator.quietWrite(url, DownloadWriter.of((finished, total, percent) ->
                 Logger.getDefault().v("finished: %d, total: %d, percent: %d", finished, total, percent))
         );
-//        assertTrue(result);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testIoXScheduler() {
+        IoXScheduler scheduler = Hummingbird.visit(IoXScheduler.class);
+        scheduler.scheduleWithFixedDelay(new Runnable() {
+            private int count = 0;
+
+            @Override
+            public void run() {
+                LOGGER.v("IoXScheduler: " + (count++));
+            }
+        }, 0, 2, TimeUnit.SECONDS);
+        pause();
     }
 
     @Test
     public void genericTest() {
 
+    }
+
+    private void pause() {
+        synchronized (LOCK) {
+            try {
+                LOCK.wait();
+            } catch (InterruptedException ignore) {
+            }
+        }
     }
 }

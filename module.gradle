@@ -39,6 +39,10 @@ dependencies {
 
     implementation(libraries.android.appcompat)
     implementation(libraries.android.lifecycleExtensions)
+    implementation(libraries.android.constraintlayout)
+    implementation(libraries.android.material)
+    implementation(libraries.android.percentlayout)
+    implementation(libraries.android.cardview)
     coreLibraryDesugaring(libraries.android.desugarJdk)
 
     implementation(libraries.remote.retrofit)
