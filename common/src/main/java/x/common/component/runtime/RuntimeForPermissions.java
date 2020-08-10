@@ -99,10 +99,8 @@ public final class RuntimeForPermissions {
                 denied.add(p);
             }
         }
-        String[] grantedArray = new String[granted.size()];
-        String[] deniedArray = new String[denied.size()];
-        granted.toArray(grantedArray);
-        denied.toArray(deniedArray);
+        String[] grantedArray = granted.toArray(new String[0]);
+        String[] deniedArray = denied.toArray(new String[0]);
         Map<Boolean, String[]> result = new HashMap<>(2);
         result.put(Boolean.TRUE, grantedArray);
         result.put(Boolean.FALSE, deniedArray);

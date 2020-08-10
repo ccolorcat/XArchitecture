@@ -7,7 +7,7 @@ import java.io.File;
 
 import x.common.IClient;
 import x.common.component.Hummingbird;
-import x.common.component.schedule.IoXScheduler;
+import x.common.component.schedule.BackgroundXScheduler;
 import x.common.component.schedule.XScheduler;
 import x.common.util.Utils;
 
@@ -26,7 +26,7 @@ final class FinderCoreImpl implements FinderCore {
 
     private FinderCoreImpl(@NonNull IClient client) {
         this.client = client;
-        this.scheduler = Hummingbird.visit(IoXScheduler.class);
+        this.scheduler = Hummingbird.visit(BackgroundXScheduler.class);
         this.finder = new Finder(scheduler, getRootDir(), MAX_SIZE_PER_DIR);
     }
 

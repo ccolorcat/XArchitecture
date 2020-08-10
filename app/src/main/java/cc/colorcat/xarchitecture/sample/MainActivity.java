@@ -1,18 +1,22 @@
 package cc.colorcat.xarchitecture.sample;
 
+import android.Manifest;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.View;
 
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.io.File;
 
 import cc.colorcat.adapter.ViewHolder;
 import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
+import x.common.component.Lazy;
+import x.common.component.audio.AudioRecorder;
+import x.common.component.finder.FileOperator;
+import x.common.component.finder.Filename;
+import x.common.component.finder.FinderCore;
 import x.common.component.loader.ObjectLoader;
 import x.common.component.log.Logger;
-import x.common.component.schedule.IoXScheduler;
+import x.common.component.runtime.RuntimeFor;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
 
@@ -83,23 +87,33 @@ public class MainActivity extends BaseActivity {
 //                });
     }
 
-    private Future<?> mFuture;
-
-    private Runnable mRunnable = new Runnable() {
-        private int count = 0;
-
-        @Override
-        public void run() {
-            mLogger.v("XScheduler: %d, %s, %b", count++, Thread.currentThread(), (Looper.getMainLooper() == Looper.myLooper()));
-        }
-    };
+    private Lazy<AudioRecorder> recorder = Lazy.by(() -> {
+        AudioRecorder recorder = Hummingbird.visit(AudioRecorder.class);
+        MainActivity.this.getLifecycle().addObserver(recorder);
+        return recorder;
+    });
 
     private void test2() {
-        mFuture = Hummingbird.visit(IoXScheduler.class)
-                .scheduleWithFixedDelay(mRunnable, 2, 1, TimeUnit.SECONDS);
+        RuntimeFor.once(this)
+                .permissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .request(permissions -> {
+                    AudioRecorder core = recorder.get();
+                    core.bind(MainActivity.this, value -> Logger.getLogger("AudioRecorder").v("volume: " + value));
+                    FileOperator operator = Hummingbird.visit(FinderCore.class).requireFileOperator(
+                            null,
+                            null,
+                            Filename.of(String.valueOf(System.currentTimeMillis()), "aac")
+                    );
+                    if (core.prepare(new File(operator.getUri().getPath()))) {
+                        core.start();
+                    }
+                });
     }
 
     private void test3() {
-        Hummingbird.visit(IoXScheduler.class).remove((Runnable) mFuture);
+        AudioRecorder recorder = this.recorder.get();
+        recorder.stop();
+        Logger.getLogger("AudioRecorder").v("success: %b, path: %s", recorder.success(), recorder.getRecorded());
+        recorder.reset();
     }
 }

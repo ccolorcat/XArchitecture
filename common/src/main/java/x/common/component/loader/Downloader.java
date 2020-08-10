@@ -10,7 +10,7 @@ import x.common.component.Lazy;
 import x.common.component.finder.DownloadWriter;
 import x.common.component.finder.FileOperator;
 import x.common.component.log.Logger;
-import x.common.component.schedule.IoXScheduler;
+import x.common.component.schedule.BackgroundXScheduler;
 import x.common.component.schedule.MainXScheduler;
 import x.common.component.schedule.XScheduler;
 import x.common.util.Utils;
@@ -21,7 +21,7 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 public final class Downloader {
-    private static final Lazy<IoXScheduler> IO = Lazy.by(() -> Hummingbird.visit(IoXScheduler.class));
+    private final Lazy<BackgroundXScheduler> io = Lazy.by(() -> Hummingbird.visit(BackgroundXScheduler.class));
     private final Uri uri;
     private final FileOperator operator;
     private XScheduler scheduler = Hummingbird.visit(MainXScheduler.class);
@@ -46,7 +46,7 @@ public final class Downloader {
     }
 
     public void fetch(DownloadListener listener) {
-        IO.get().execute(new DownloadTask(uri, operator, scheduler, listener));
+        io.get().execute(new DownloadTask(uri, operator, scheduler, listener));
     }
 
 

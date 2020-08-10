@@ -8,6 +8,6 @@ import x.common.component.annotation.Core;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-@Core(IoXSchedulerImpl.class)
-public interface IoXScheduler extends XScheduler {
+@Core(BackgroundXSchedulerImpl.class)
+public interface BackgroundXScheduler extends XScheduler {
 }

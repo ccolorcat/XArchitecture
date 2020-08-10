@@ -14,7 +14,7 @@ import x.common.component.finder.Filename;
 import x.common.component.finder.FinderCore;
 import x.common.component.finder.Module;
 import x.common.component.log.Logger;
-import x.common.component.schedule.IoXScheduler;
+import x.common.component.schedule.BackgroundXScheduler;
 import x.common.test.TestManager;
 
 import static org.junit.Assert.assertEquals;
@@ -77,7 +77,7 @@ public class ExampleUnitTest {
 
     @Test
     public void testIoXScheduler() {
-        IoXScheduler scheduler = Hummingbird.visit(IoXScheduler.class);
+        BackgroundXScheduler scheduler = Hummingbird.visit(BackgroundXScheduler.class);
         scheduler.scheduleWithFixedDelay(new Runnable() {
             private int count = 0;
 

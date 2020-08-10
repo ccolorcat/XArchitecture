@@ -17,7 +17,7 @@ import x.common.component.finder.DownloadWriter;
 import x.common.component.finder.FileOperator;
 import x.common.component.log.Logger;
 import x.common.component.monitor.NetworkMonitor;
-import x.common.component.schedule.IoXScheduler;
+import x.common.component.schedule.BackgroundXScheduler;
 import x.common.component.schedule.MainXScheduler;
 import x.common.util.AndroidUtils;
 
@@ -28,7 +28,7 @@ import x.common.util.AndroidUtils;
  */
 final class HttpImageHandler implements ImageHandler {
     private final Logger logger = ObjectLoader.LOGGER;
-    private final Lazy<IoXScheduler> io = Lazy.by(() -> Hummingbird.visit(IoXScheduler.class));
+    private final Lazy<BackgroundXScheduler> io = Lazy.by(() -> Hummingbird.visit(BackgroundXScheduler.class));
     private final Lazy<MainXScheduler> main = Lazy.by(() -> Hummingbird.visit(MainXScheduler.class));
     private final Lazy<NetworkMonitor> monitor = Lazy.by(() -> Hummingbird.visit(NetworkMonitor.class));
 
