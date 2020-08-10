@@ -9,6 +9,11 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application>
-        <activity android:name=".view.ContainerActivity" />
+        <activity
+            android:name=".view.ContainerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".component.runtime.RuntimeForCompatActivity"
+            android:theme="@style/RuntimeForCompatTheme" />
     </application>
 </manifest>
