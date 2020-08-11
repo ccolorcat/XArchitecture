@@ -14,7 +14,6 @@ import x.common.component.annotation.ApiModel;
 import x.common.component.annotation.ApiModelProcessor;
 import x.common.component.annotation.Core;
 import x.common.component.annotation.CoreProcessor;
-import x.common.util.Reflects;
 import x.common.component.annotation.Stateful;
 import x.common.component.annotation.StatefulProcess;
 import x.common.component.annotation.Stateless;
@@ -23,6 +22,7 @@ import x.common.component.annotation.StoreModel;
 import x.common.component.annotation.StoreModelProcessor;
 import x.common.component.log.Logger;
 import x.common.util.Once;
+import x.common.util.Reflects;
 import x.common.util.Utils;
 
 
@@ -33,9 +33,11 @@ import x.common.util.Utils;
  */
 @SuppressWarnings({"unchecked", "rawtypes", "UnusedReturnValue"})
 public final class Hummingbird {
-    private static final Map<Class<?>, Class<?>> sStatefulCaches = new HashMap<>();
-    private static final Map<Class<?>, Object> sStatelessCaches = new HashMap<>();
-    private static final WeakHashMap<Class<?>, Object> sCaches = new WeakHashMap<>();
+    public static final String TAG = "Hummingbird";
+
+    private static final Map<Class<?>, Class<?>> sCachedStateful = new HashMap<>();
+    private static final Map<Class<?>, Object> sCachedStateless = new HashMap<>();
+    private static final WeakHashMap<Class<?>, Object> sCached = new WeakHashMap<>();
     private static final Once<IClient> sClient = new Once<>();
     private static final Map<Class<? extends Annotation>, AnnotationProcessor> sProcessors = new HashMap<>();
 
@@ -65,39 +67,39 @@ public final class Hummingbird {
         if (result != null) return result;
 
         if (tClass.getAnnotation(Stateful.class) != null) return byAnnotationProcessor(tClass);
-        result = (T) sCaches.get(tClass);
+        result = (T) sCached.get(tClass);
         if (result == null) {
             result = byAnnotationProcessor(tClass);
-            sCaches.put(tClass, result);
+            sCached.put(tClass, result);
         } else if (sClient.get().loggable()) {
-            Logger.getLogger("Hummingbird").v("hit cached: " + tClass.getName() + '=' + result.getClass().getName());
+            Logger.getLogger(TAG).v("hit cached: " + tClass.getName() + '=' + result.getClass().getName());
         }
         return result;
     }
 
     public static <T> boolean registerStateless(@NonNull Class<? super T> tClass, @NonNull T impl) {
-        sStatelessCaches.put(Utils.requireNonNull(tClass), Utils.requireNonNull(impl));
+        sCachedStateless.put(Utils.requireNonNull(tClass), Utils.requireNonNull(impl));
         return true;
     }
 
     public static <T> boolean unregisterStateless(@NonNull Class<? super T> tClass) {
-        sStatelessCaches.remove(tClass);
+        sCachedStateless.remove(tClass);
         return true;
     }
 
     public static <T> boolean registerStateful(@NonNull Class<? super T> tClass, @NonNull Class<? extends T> impl) {
-        sStatefulCaches.put(Utils.requireNonNull(tClass), Utils.requireNonNull(impl));
+        sCachedStateful.put(Utils.requireNonNull(tClass), Utils.requireNonNull(impl));
         return true;
     }
 
     public static <T> boolean unregisterStateful(@NonNull Class<? super T> tClass) {
-        sStatefulCaches.remove(tClass);
+        sCachedStateful.remove(tClass);
         return true;
     }
 
     @Nullable
     private static <T> T byRegisteredStateful(@NonNull Class<T> tClass) {
-        Class<?> impl = sStatefulCaches.get(tClass);
+        Class<?> impl = sCachedStateful.get(tClass);
         if (impl != null) {
             try {
                 return (T) Reflects.newDefaultInstance(impl);
@@ -110,7 +112,7 @@ public final class Hummingbird {
 
     @Nullable
     private static <T> T byRegisteredStateless(@NonNull Class<T> tClass) {
-        return (T) sStatelessCaches.get(tClass);
+        return (T) sCachedStateless.get(tClass);
     }
 
     private static <T> T byAnnotationProcessor(Class<T> tClass) {

@@ -19,6 +19,7 @@ import x.common.test.TestManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,9 +59,8 @@ public class ExampleUnitTest {
         List<Person> persons = model.loadPersons();
         assertEquals(original, persons);
 
-        assertTrue(model.savePersons(original));
-        List<Person> persons2 = model.loadPersons();
-        assertEquals(original, persons2);
+        assertTrue(model.remove());
+        assertNull(model.loadPersons());
     }
 
     @Test

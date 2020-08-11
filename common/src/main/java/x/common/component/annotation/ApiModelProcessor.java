@@ -7,6 +7,7 @@ import x.common.IClient;
 import x.common.component.Hummingbird;
 import x.common.component.XLruCache;
 import x.common.component.network.ApiFactoryProvider;
+import x.common.util.Reflects;
 import x.common.util.Utils;
 
 
@@ -18,22 +19,22 @@ import x.common.util.Utils;
 
 @SuppressWarnings("unchecked")
 public final class ApiModelProcessor<T> implements AnnotationProcessor<T, ApiModel> {
-    private final XLruCache<Class<?>, Object> mCaches = new XLruCache<>(8);
+    private final XLruCache<Class<?>, Object> cached = new XLruCache<>(8);
 
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull ApiModel annotation, @NonNull IClient client) throws Throwable {
-        Object result = mCaches.get(tClass);
+        Object result = cached.get(tClass);
         if (result == null) {
             result = create(tClass, annotation, client);
-            mCaches.put(tClass, result);
+            cached.put(tClass, result);
         }
         return (T) result;
     }
 
     private static <T> T create(Class<T> tClass, ApiModel annotation, IClient client) throws Throwable {
         Class<?> impl = annotation.value();
-        if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) impl.newInstance();
+        if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);
         String baseUrl = Utils.emptyElse(annotation.baseUrl(), client.getBaseUrl());
         return Hummingbird.visit(ApiFactoryProvider.class).of(baseUrl).create(tClass);
     }

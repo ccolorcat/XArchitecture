@@ -16,20 +16,20 @@ import x.common.util.Reflects;
  * GitHub: https://github.com/ccolorcat
  */
 public final class CoreProcessor<T> implements AnnotationProcessor<T, Core> {
-    private final Map<Class<?>, Object> mCores = new HashMap<>();
+    private final Map<Class<?>, Object> cached = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull Core annotation, @NonNull IClient client) throws Throwable {
-        Object t = mCores.get(tClass);
-        if (t == null) {
+        Object result = cached.get(tClass);
+        if (result == null) {
             Class<?> impl = annotation.value();
             if (impl == Void.class || !Checker.assertImpl(tClass, impl)) impl = tClass;
-            t = newInstance(impl, client);
-            mCores.put(tClass, t);
+            result = newInstance(impl, client);
+            cached.put(tClass, result);
         }
-        return (T) t;
+        return (T) result;
     }
 
     private static <T> T newInstance(Class<T> tClass, IClient client) throws Throwable {

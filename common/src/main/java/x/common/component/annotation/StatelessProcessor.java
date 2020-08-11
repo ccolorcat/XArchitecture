@@ -15,13 +15,13 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 public final class StatelessProcessor<T> implements AnnotationProcessor<T, Stateless> {
-    private final XLruCache<Class<?>, Object> mCaches = new XLruCache<>(16);
+    private final XLruCache<Class<?>, Object> cached = new XLruCache<>(16);
 
     @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull Stateless annotation, @NonNull IClient client) throws Throwable {
-        Object result = mCaches.get(tClass);
+        Object result = cached.get(tClass);
         if (result == null) {
             Class<?> impl = annotation.value();
             if (impl == Void.class || !Checker.assertImpl(tClass, impl)) {
@@ -29,7 +29,7 @@ public final class StatelessProcessor<T> implements AnnotationProcessor<T, State
                 impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
             }
             result = Reflects.newDefaultInstance(impl);
-            mCaches.put(tClass, result);
+            cached.put(tClass, result);
         }
         return (T) result;
     }

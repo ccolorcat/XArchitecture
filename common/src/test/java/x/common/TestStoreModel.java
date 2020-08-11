@@ -4,6 +4,7 @@ import java.util.List;
 
 import x.common.component.annotation.StoreModel;
 import x.common.component.store.Read;
+import x.common.component.store.Remove;
 import x.common.component.store.Write;
 
 /**
@@ -19,4 +20,7 @@ public interface TestStoreModel {
 
     @Read(PERSONS)
     List<Person> loadPersons();
+
+    @Remove(PERSONS)
+    boolean remove();
 }

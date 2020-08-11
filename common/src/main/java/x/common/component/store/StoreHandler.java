@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
+import x.common.component.Hummingbird;
 import x.common.component.XLruCache;
 import x.common.component.log.Logger;
 
@@ -36,7 +37,7 @@ final class StoreHandler implements InvocationHandler {
             executor = parse(method, args);
             cachedExecutors.put(method, executor);
         } else if (loggable) {
-            Logger.getLogger("Hummingbird").v("hit cached StoreExecutor: " + method + '=' + executor);
+            Logger.getLogger(Hummingbird.TAG).v("hit cached StoreExecutor: " + method + '=' + executor);
         }
         return executor.execute(args);
     }
