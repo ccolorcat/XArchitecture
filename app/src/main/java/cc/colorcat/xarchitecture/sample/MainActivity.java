@@ -6,7 +6,6 @@ import android.view.View;
 
 import java.io.File;
 
-import cc.colorcat.adapter.ViewHolder;
 import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
 import x.common.component.Lazy;
@@ -43,7 +42,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ViewHolder holder = XHolder.from(this).batchClick(
+        XHolder holder = XHolder.from(this).batchClick(
                 mClick,
                 R.id.btn_test_1,
                 R.id.btn_test_2,

@@ -16,15 +16,15 @@ import x.common.util.Utils;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-public class ShowableControllerImpl implements ShowableController, LifecycleEventObserver {
+public final class ShowableControllerImpl implements ShowableController, LifecycleEventObserver {
     private XLruCache<String, Showable> mCached = new XLruCache<>(4);
     private final Lifecycle.Event mTiming;
 
-    public ShowableControllerImpl() {
+    private ShowableControllerImpl() {
         this(Lifecycle.Event.ON_DESTROY);
     }
 
-    ShowableControllerImpl(@NonNull Lifecycle.Event timing) {
+    private ShowableControllerImpl(@NonNull Lifecycle.Event timing) {
         mTiming = Utils.requireNonNull(timing, "timing == null");
     }
 

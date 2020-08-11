@@ -10,10 +10,10 @@ import x.common.util.Utils;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-public abstract class DialogFragmentShowable implements Showable {
-    private final DialogFragment mDialogFragment;
+public abstract class DialogFragmentShowable<T extends DialogFragment> implements Showable {
+    private final T mDialogFragment;
 
-    public DialogFragmentShowable(@NonNull DialogFragment dialogFragment) {
+    public DialogFragmentShowable(@NonNull T dialogFragment) {
         mDialogFragment = Utils.requireNonNull(dialogFragment, "dialogFragment == null");
     }
 
@@ -28,5 +28,10 @@ public abstract class DialogFragmentShowable implements Showable {
     @Override
     public boolean isShowing() {
         return mDialogFragment.requireDialog().isShowing();
+    }
+
+    @NonNull
+    public T getDialogFragment() {
+        return mDialogFragment;
     }
 }

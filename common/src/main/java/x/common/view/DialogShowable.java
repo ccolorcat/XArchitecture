@@ -11,10 +11,10 @@ import x.common.util.Utils;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-public class DialogShowable implements Showable {
-    private final Dialog mDialog;
+public class DialogShowable<T extends Dialog> implements Showable {
+    private final T mDialog;
 
-    public DialogShowable(@NonNull Dialog dialog) {
+    public DialogShowable(@NonNull T dialog) {
         mDialog = Utils.requireNonNull(dialog, "dialog == null");
     }
 
@@ -31,5 +31,10 @@ public class DialogShowable implements Showable {
     @Override
     public boolean isShowing() {
         return mDialog.isShowing();
+    }
+
+    @NonNull
+    public Dialog getDialog() {
+        return mDialog;
     }
 }

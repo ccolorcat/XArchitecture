@@ -11,10 +11,10 @@ import x.common.util.Utils;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
-public abstract class PopupWindowShowable implements Showable {
-    private final PopupWindow mPopupWindow;
+public abstract class PopupWindowShowable<T extends PopupWindow> implements Showable {
+    private final T mPopupWindow;
 
-    public PopupWindowShowable(@NonNull PopupWindow popupWindow) {
+    public PopupWindowShowable(@NonNull T popupWindow) {
         mPopupWindow = Utils.requireNonNull(popupWindow, "popupWindow == null");
     }
 
@@ -29,5 +29,10 @@ public abstract class PopupWindowShowable implements Showable {
     @Override
     public boolean isShowing() {
         return mPopupWindow.isShowing();
+    }
+
+    @NonNull
+    public T getPopupWindow() {
+        return mPopupWindow;
     }
 }

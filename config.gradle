@@ -37,7 +37,7 @@ def remote = [
         glide                   : "com.github.bumptech.glide:glide:$versions.glide",
         glideCompiler           : "com.github.bumptech.glide:compiler:$versions.glide",
 
-        adapter                 : "com.github.ccolorcat:Adapter:v3.4.1",
+        adapter                 : "com.github.ccolorcat:Adapter:v4.0.0",
 ]
 
 def sdk = [

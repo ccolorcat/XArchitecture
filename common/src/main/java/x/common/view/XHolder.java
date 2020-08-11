@@ -18,7 +18,7 @@ import x.common.util.Utils;
  * Date: 2020-07-30
  * GitHub: https://github.com/ccolorcat
  */
-public class XHolder extends ViewHolder {
+public class XHolder extends ViewHolder<XHolder> {
     @NonNull
     public static XHolder from(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @LayoutRes int layoutId) {
         return new XHolder(inflater.inflate(layoutId, container, false));
