@@ -39,7 +39,6 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     public boolean prepare(@NonNull File save) {
         try {
             this.savePath = Utils.requireNonNull(save, "save == null");
-//            savePath = new File(client.cacheDir(), System.currentTimeMillis() + ".aac");
             MediaRecorder recorder = this.recorder.get();
             // 录制的音频通道数
             recorder.setAudioChannels(1);
@@ -62,8 +61,7 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @Override
     public void start() {
         try {
-            MediaRecorder recorder = this.recorder.get();
-            recorder.start();
+            recorder.get().start();
             future = scheduler.get().scheduleWithFixedDelay(volumeTask, 0L, 200L, TimeUnit.MILLISECONDS);
         } catch (Throwable t) {
             Logger.getDefault().e(t);
@@ -76,10 +74,7 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @Override
     public void stop() {
         try {
-            if (future instanceof Runnable) {
-                scheduler.get().remove((Runnable) future);
-                future = null;
-            }
+            removeVolumeTask();
             recorder.get().stop();
         } catch (Throwable t) {
             Logger.getDefault().e(t);
@@ -95,10 +90,7 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     @Override
     public void release() {
-        Logger.getDefault().w("AudioRecorderImpl release");
-        if (future instanceof Runnable) {
-            scheduler.get().remove((Runnable) future);
-        }
+        removeVolumeTask();
         savePath = null;
         this.recorder.get().release();
     }
@@ -111,6 +103,13 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @Override
     public File getRecorded() {
         return savePath;
+    }
+
+    private void removeVolumeTask() {
+        if (future instanceof Runnable) {
+            scheduler.get().remove((Runnable) future);
+            future = null;
+        }
     }
 
     private void updateVolume() {
