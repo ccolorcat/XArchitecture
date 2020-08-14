@@ -12,7 +12,7 @@ def android = [
         percentlayout        : "androidx.percentlayout:percentlayout:1.0.0",
         cardview             : "androidx.cardview:cardview:1.0.0",
         recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:1.0.0",
-        desugarJdk           : "com.android.tools:desugar_jdk_libs:1.0.10"
+        desugarJdkLibs       : "com.android.tools:desugar_jdk_libs:1.0.10"
 ]
 
 def test = [

@@ -24,7 +24,7 @@ public final class Downloader {
     private final Lazy<BackgroundXScheduler> io = Lazy.by(() -> Hummingbird.visit(BackgroundXScheduler.class));
     private final Uri uri;
     private final FileOperator operator;
-    private XScheduler scheduler = Hummingbird.visit(MainXScheduler.class);
+    private XScheduler dispatcher = Hummingbird.visit(MainXScheduler.class);
 
     Downloader(@NonNull Uri uri, @NonNull FileOperator operator) {
         this.uri = uri;
@@ -32,13 +32,23 @@ public final class Downloader {
     }
 
     public Downloader on(@NonNull XScheduler scheduler) {
-        this.scheduler = Utils.requireNonNull(scheduler);
+        this.dispatcher = Utils.requireNonNull(scheduler);
         return this;
     }
 
     @Nullable
-    public FileOperator fetchIfExists() {
+    public FileOperator getIfExists() {
         return operator.exists() ? operator : null;
+    }
+
+    @Nullable
+    public FileOperator execute() {
+        return execute(null);
+    }
+
+    @Nullable
+    public FileOperator execute(DownloadListener listener) {
+        return createTask(listener).execute();
     }
 
     public void fetch() {
@@ -46,26 +56,35 @@ public final class Downloader {
     }
 
     public void fetch(DownloadListener listener) {
-        io.get().execute(new DownloadTask(uri, operator, scheduler, listener));
+        io.get().execute(createTask(listener));
+    }
+
+    private DownloadTask createTask(DownloadListener listener) {
+        return new DownloadTask(uri, operator, dispatcher, listener);
     }
 
 
     private static class DownloadTask implements Runnable {
         private final Uri uri;
         private final FileOperator operator;
-        private final XScheduler scheduler;
+        private final XScheduler dispatcher;
         private final DownloadListener listener;
 
-        private DownloadTask(Uri uri, FileOperator operator, XScheduler scheduler, DownloadListener listener) {
+        private DownloadTask(Uri uri, FileOperator operator, XScheduler dispatcher, DownloadListener listener) {
             this.uri = uri;
             this.operator = operator;
-            this.scheduler = scheduler;
+            this.dispatcher = dispatcher;
             this.listener = listener;
         }
 
         @Override
         public void run() {
-            if (listener != null) scheduler.execute(this::dispatchStart);
+            execute();
+        }
+
+        @Nullable
+        private FileOperator execute() {
+            if (listener != null) dispatcher.execute(this::dispatchStart);
             Throwable throwable = null;
             try {
                 operator.write(uri.toString(), createWriter());
@@ -74,13 +93,14 @@ public final class Downloader {
             } finally {
                 if (listener != null) {
                     final Throwable cause = throwable;
-                    scheduler.execute(() -> dispatchResult(cause));
+                    dispatcher.execute(() -> dispatchResult(cause));
                 }
             }
+            return throwable == null ? operator : null;
         }
 
         private DownloadWriter createWriter() {
-            return listener == null ? DownloadWriter.create() : DownloadWriter.of(scheduler, listener);
+            return listener == null ? DownloadWriter.create() : DownloadWriter.of(dispatcher, listener);
         }
 
         private void dispatchStart() {

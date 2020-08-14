@@ -43,7 +43,7 @@ dependencies {
     implementation(libraries.android.material)
     implementation(libraries.android.percentlayout)
     implementation(libraries.android.cardview)
-    coreLibraryDesugaring(libraries.android.desugarJdk)
+    coreLibraryDesugaring(libraries.android.desugarJdkLibs)
 
     implementation(libraries.remote.retrofit)
     implementation(libraries.remote.gson)
