@@ -69,6 +69,11 @@ public class XObservableImpl<T> implements XObservable<T> {
         });
     }
 
+    @Override
+    public boolean hasObserver(XObserver<? super T> observer) {
+        return observer != null && this.observers.contains(observer);
+    }
+
     protected final void update(@NonNull T value) {
         if (this.value != Utils.requireNonNull(value, "value == null")) {
             this.value = value;

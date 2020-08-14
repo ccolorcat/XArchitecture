@@ -5,13 +5,14 @@ def versions = [
 ]
 
 def android = [
-        appcompat          : "androidx.appcompat:appcompat:1.1.0",
-        lifecycleExtensions: "androidx.lifecycle:lifecycle-extensions:2.2.0",
-        constraintlayout   : "androidx.constraintlayout:constraintlayout:1.1.3",
-        material           : "com.google.android.material:material:1.2.0",
-        percentlayout      : "androidx.percentlayout:percentlayout:1.0.0",
-        cardview           : "androidx.cardview:cardview:1.0.0",
-        desugarJdk         : "com.android.tools:desugar_jdk_libs:1.0.10"
+        appcompat            : "androidx.appcompat:appcompat:1.1.0",
+        lifecycleExtensions  : "androidx.lifecycle:lifecycle-extensions:2.2.0",
+        constraintlayout     : "androidx.constraintlayout:constraintlayout:1.1.3",
+        material             : "com.google.android.material:material:1.2.0",
+        percentlayout        : "androidx.percentlayout:percentlayout:1.0.0",
+        cardview             : "androidx.cardview:cardview:1.0.0",
+        recyclerviewSelection: "androidx.recyclerview:recyclerview-selection:1.0.0",
+        desugarJdk           : "com.android.tools:desugar_jdk_libs:1.0.10"
 ]
 
 def test = [

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 2020-07-29
  * GitHub: https://github.com/ccolorcat
  */
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface XScheduler {
     void shutdown();
 
@@ -19,27 +20,27 @@ public interface XScheduler {
 
     void remove(@NonNull Runnable task);
 
-    void execute(@NonNull Runnable runnable);
+    void execute(@NonNull Runnable command);
 
-    default <V> Future<V> submit(@NonNull Callable<V> callable) {
+    default <V> Future<V> submit(@NonNull Callable<V> task) {
+        return schedule(task, 0L, TimeUnit.MILLISECONDS);
+    }
+
+    default <V> Future<V> submit(@NonNull Runnable task, V result) {
+        Callable<V> callable = Executors.callable(task, result);
         return schedule(callable, 0L, TimeUnit.MILLISECONDS);
     }
 
-    default <V> Future<V> submit(@NonNull Runnable runnable, V result) {
-        Callable<V> callable = Executors.callable(runnable, result);
-        return schedule(callable, 0L, TimeUnit.MILLISECONDS);
-    }
-
-    default Future<?> submit(@NonNull Runnable runnable) {
-        return schedule(runnable, 0L, TimeUnit.MILLISECONDS);
+    default Future<?> submit(@NonNull Runnable task) {
+        return schedule(task, 0L, TimeUnit.MILLISECONDS);
     }
 
     @NonNull
-    Future<?> schedule(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit);
+    Future<?> schedule(@NonNull Runnable command, long delay, @NonNull TimeUnit unit);
 
     @NonNull
     <V> Future<V> schedule(@NonNull Callable<V> callable, long delay, @NonNull TimeUnit unit);
 
     @NonNull
-    Future<?> scheduleWithFixedDelay(@NonNull Runnable runnable, long initialDelay, long delay, @NonNull TimeUnit unit);
+    Future<?> scheduleWithFixedDelay(@NonNull Runnable command, long initialDelay, long delay, @NonNull TimeUnit unit);
 }

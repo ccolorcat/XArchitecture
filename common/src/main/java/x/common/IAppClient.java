@@ -37,5 +37,7 @@ public interface IAppClient extends IClient, ViewModelStoreOwner {
     Application getApplication();
 
     @NonNull
-    ViewModelProvider.AndroidViewModelFactory getAndroidViewModelFactory();
+    default ViewModelProvider.AndroidViewModelFactory getAndroidViewModelFactory() {
+        return ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication());
+    }
 }

@@ -29,7 +29,7 @@ final class AppCoreImpl extends XObservableImpl<AppState> implements AppCore {
     }
 
     @SuppressWarnings("unused")
-    private class AppLifecycleListener extends SimpleActivityLifecycleCallbacks implements LifecycleObserver {
+    public class AppLifecycleListener extends SimpleActivityLifecycleCallbacks implements LifecycleObserver {
         private final Logger logger = Logger.getLogger("AppCore");
         private int count = 0;
 

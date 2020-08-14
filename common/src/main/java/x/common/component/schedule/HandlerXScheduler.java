@@ -7,4 +7,6 @@ package x.common.component.schedule;
  */
 public interface HandlerXScheduler extends XScheduler {
     void removeAll();
+
+    boolean has(Runnable task);
 }

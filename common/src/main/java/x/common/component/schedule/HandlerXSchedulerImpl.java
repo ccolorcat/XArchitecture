@@ -73,6 +73,11 @@ class HandlerXSchedulerImpl implements HandlerXScheduler {
     }
 
     @Override
+    public boolean has(Runnable task) {
+        return task != null && handler.get().hasCallbacks(task);
+    }
+
+    @Override
     protected void finalize() throws Throwable {
         try {
             shutdown();
@@ -82,19 +87,19 @@ class HandlerXSchedulerImpl implements HandlerXScheduler {
     }
 
     @Override
-    public void execute(@NonNull Runnable runnable) {
-        Utils.requireNonNull(runnable, "runnable == null");
+    public void execute(@NonNull Runnable command) {
+        Utils.requireNonNull(command, "command == null");
         if (handler.get().getLooper().getThread() == Thread.currentThread()) {
-            runnable.run();
+            command.run();
         } else {
-            handler.get().post(runnable);
+            handler.get().post(command);
         }
     }
 
     @NonNull
     @Override
-    public Future<?> schedule(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
-        XFutureTask<?> future = new XFutureTask<>(runnable, null, 0);
+    public Future<?> schedule(@NonNull Runnable command, long delay, @NonNull TimeUnit unit) {
+        XFutureTask<?> future = new XFutureTask<>(command, null, 0);
         return executeDelayed(future, delay, unit);
     }
 
@@ -107,8 +112,8 @@ class HandlerXSchedulerImpl implements HandlerXScheduler {
 
     @NonNull
     @Override
-    public Future<?> scheduleWithFixedDelay(@NonNull Runnable runnable, long initialDelay, long delay, @NonNull TimeUnit unit) {
-        XFutureTask<?> future = new XFutureTask<>(runnable, null, unit.toMillis(delay));
+    public Future<?> scheduleWithFixedDelay(@NonNull Runnable command, long initialDelay, long delay, @NonNull TimeUnit unit) {
+        XFutureTask<?> future = new XFutureTask<>(command, null, unit.toMillis(delay));
         return executeDelayed(future, initialDelay, unit);
     }
 

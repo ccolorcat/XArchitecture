@@ -40,29 +40,29 @@ public class SchedulerWrapper implements XScheduler {
     }
 
     @Override
-    public void execute(@NonNull Runnable runnable) {
-        executor.execute(runnable);
+    public void execute(@NonNull Runnable command) {
+        executor.execute(command);
     }
 
     @Override
-    public <V> Future<V> submit(@NonNull Callable<V> callable) {
-        return executor.submit(callable);
+    public <V> Future<V> submit(@NonNull Callable<V> task) {
+        return executor.submit(task);
     }
 
     @Override
-    public <V> Future<V> submit(@NonNull Runnable runnable, V result) {
-        return executor.submit(runnable, result);
+    public <V> Future<V> submit(@NonNull Runnable task, V result) {
+        return executor.submit(task, result);
     }
 
     @Override
-    public Future<?> submit(@NonNull Runnable runnable) {
-        return executor.submit(runnable);
+    public Future<?> submit(@NonNull Runnable task) {
+        return executor.submit(task);
     }
 
     @NonNull
     @Override
-    public Future<?> schedule(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
-        return executor.schedule(runnable, delay, unit);
+    public Future<?> schedule(@NonNull Runnable command, long delay, @NonNull TimeUnit unit) {
+        return executor.schedule(command, delay, unit);
     }
 
     @NonNull
@@ -73,7 +73,7 @@ public class SchedulerWrapper implements XScheduler {
 
     @NonNull
     @Override
-    public Future<?> scheduleWithFixedDelay(@NonNull Runnable runnable, long initialDelay, long delay, @NonNull TimeUnit unit) {
-        return executor.scheduleWithFixedDelay(runnable, initialDelay, delay, unit);
+    public Future<?> scheduleWithFixedDelay(@NonNull Runnable command, long initialDelay, long delay, @NonNull TimeUnit unit) {
+        return executor.scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
 }

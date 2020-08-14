@@ -83,7 +83,7 @@ public class ExampleUnitTest {
 
             @Override
             public void run() {
-                LOGGER.v("IoXScheduler: " + (count++));
+                LOGGER.v("BackgroundXScheduler: " + (count++));
             }
         }, 0, 2, TimeUnit.SECONDS);
         pause();

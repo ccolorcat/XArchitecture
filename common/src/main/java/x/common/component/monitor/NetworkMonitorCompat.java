@@ -47,6 +47,11 @@ final class NetworkMonitorCompat implements NetworkMonitor {
         delegate.bind(receiveSticky, owner, observer);
     }
 
+    @Override
+    public boolean hasObserver(XObserver<? super Boolean> observer) {
+        return delegate.hasObserver(observer);
+    }
+
     private static NetworkMonitor newNetworkMonitor(IClient client) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 ? new NetworkMonitorLollipop(client) : new NetworkMonitorLower(client);

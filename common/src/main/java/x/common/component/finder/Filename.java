@@ -107,6 +107,7 @@ public final class Filename {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name + '.' + type;

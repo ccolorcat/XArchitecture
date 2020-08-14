@@ -27,4 +27,6 @@ public interface XObservable<T> {
     }
 
     void bind(boolean receiveSticky, @NonNull LifecycleOwner owner, @NonNull XObserver<? super T> observer);
+
+    boolean hasObserver(XObserver<? super T> observer);
 }
