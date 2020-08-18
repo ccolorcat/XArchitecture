@@ -22,7 +22,7 @@ import x.common.contract.IAndroid;
  * Date: 2020-07-30
  * GitHub: https://github.com/ccolorcat
  */
-public abstract class BaseDialogFragment extends DialogFragment implements IAndroid.View {
+public abstract class BaseDialogFragment extends DialogFragment implements IAndroid.View, OnBackPressListener {
     private ShowableController sc;
     private boolean mActive = false;
 
@@ -73,5 +73,10 @@ public abstract class BaseDialogFragment extends DialogFragment implements IAndr
             owner.getLifecycle().addObserver(sc);
         }
         return sc;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
     }
 }

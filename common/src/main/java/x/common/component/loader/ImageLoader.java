@@ -1,5 +1,6 @@
 package x.common.component.loader;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
@@ -70,11 +71,20 @@ public final class ImageLoader {
 
     public ImageLoader asGif() {
         asGif = true;
+        builder = builder.decode(GifDrawable.class);
         return this;
     }
 
     public ImageLoader asGifByGuess() {
         asGifByGuess = true;
+        if (isGifByGuess()) {
+            builder = builder.decode(GifDrawable.class);
+        }
+        return this;
+    }
+
+    public ImageLoader asBitmap() {
+        builder = builder.decode(Bitmap.class);
         return this;
     }
 
@@ -149,7 +159,7 @@ public final class ImageLoader {
         Uri attachedUri = CACHED.get(view);
         if (this.uri.equals(attachedUri)) {
             CACHED.remove(view);
-            if (isGif()) builder = builder.decode(GifDrawable.class);
+//            if (isGif()) builder = builder.decode(GifDrawable.class);
             builder.load(uri).into(view);
         }
     }
@@ -162,5 +172,11 @@ public final class ImageLoader {
             return path != null && path.toLowerCase().endsWith(GIF_WITH_DOT);
         }
         return false;
+    }
+
+    private boolean isGifByGuess() {
+        if (GIF.equalsIgnoreCase(filename.type)) return true;
+        String path = uri.getPath();
+        return path != null && path.toLowerCase().endsWith(GIF_WITH_DOT);
     }
 }
