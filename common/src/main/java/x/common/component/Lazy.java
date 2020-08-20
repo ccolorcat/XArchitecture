@@ -24,6 +24,10 @@ public final class Lazy<T> {
         this.producer = Utils.requireNonNull(producer, "producer == null");
     }
 
+    public boolean initialized() {
+        return value != null;
+    }
+
     @NonNull
     public T get() {
         if (value == null) {

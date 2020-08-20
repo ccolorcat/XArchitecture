@@ -12,6 +12,8 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import x.common.util.Utils;
+
 /**
  * Author: cxx
  * Date: 2020-07-30
@@ -53,9 +55,7 @@ public final class RuntimeFor {
 
     @NonNull
     public RuntimeForPermissions permissions(@NonNull String... permissions) {
-        if (permissions.length == 0) {
-            throw new IllegalArgumentException("permissions is empty.");
-        }
+        Utils.requireNonNull(permissions, "permissions == null");
         return new RuntimeForPermissions(getAndClear(), permissions);
     }
 
