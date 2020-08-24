@@ -32,6 +32,7 @@ public final class CoreProcessor<T> implements AnnotationProcessor<T, Core> {
         return (T) result;
     }
 
+    @NonNull
     private static <T> T newInstance(Class<T> tClass, IClient client) throws Throwable {
         Constructor<T> c = Reflects.quietGetConstructor(tClass, IClient.class);
         if (c != null) {

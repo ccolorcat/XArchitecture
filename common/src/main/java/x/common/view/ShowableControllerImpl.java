@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import java.util.Map;
 
-import x.common.component.Producer;
+import x.common.util.function.Producer;
 import x.common.component.XLruCache;
 import x.common.util.Utils;
 

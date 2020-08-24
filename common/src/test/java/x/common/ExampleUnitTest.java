@@ -50,6 +50,14 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testMoocApiModel() throws IOException {
+        TestMoocApi model = Hummingbird.visit(TestMoocApi.class);
+        String result = model.listCourses(4, 30).execute();
+        LOGGER.v(result);
+        assertNotNull(result);
+    }
+
+    @Test
     public void testStoreModel() {
         List<Person> original = new ArrayList<>();
         original.add(new Person("John", 34, true));

@@ -18,7 +18,7 @@ public interface DownloadListener extends ProgressListener {
 
     default void onSuccess(@NonNull FileOperator operator) {}
 
-    default void onFailure(@NonNull Throwable throwable) {}
+    default void onFailure(@NonNull Throwable cause) {}
 
     default void onFinish() {}
 }

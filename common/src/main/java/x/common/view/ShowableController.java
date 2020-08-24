@@ -3,7 +3,7 @@ package x.common.view;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleObserver;
 
-import x.common.component.Producer;
+import x.common.util.function.Producer;
 import x.common.component.annotation.Stateful;
 
 /**

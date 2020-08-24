@@ -9,7 +9,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.lifecycle.LifecycleOwner;
 
 import x.common.component.Hummingbird;
@@ -22,7 +22,7 @@ import x.common.contract.IAndroid;
  * Date: 2020-07-30
  * GitHub: https://github.com/ccolorcat
  */
-public abstract class BaseDialogFragment extends DialogFragment implements IAndroid.View, OnBackPressListener {
+public abstract class BaseDialogFragment extends AppCompatDialogFragment implements IAndroid.View, OnBackPressListener {
     private ShowableController sc;
     private boolean mActive = false;
 

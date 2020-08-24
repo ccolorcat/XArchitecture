@@ -32,6 +32,7 @@ public final class ApiModelProcessor<T> implements AnnotationProcessor<T, ApiMod
         return (T) result;
     }
 
+    @NonNull
     private static <T> T create(Class<T> tClass, ApiModel annotation, IClient client) throws Throwable {
         Class<?> impl = annotation.value();
         if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);

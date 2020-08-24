@@ -12,10 +12,8 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import x.common.IClient;
-import x.common.component.log.Logger;
 import x.common.util.Utils;
 
 /**
@@ -58,8 +56,9 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
     }
 
     private Interceptor createLoggingInterceptor() {
-        return new HttpLoggingInterceptor(log -> Logger.getLogger("OkHttp").i(log))
-                .setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new LoggingInterceptor();
+//        return new HttpLoggingInterceptor(log -> Logger.getLogger("OkHttp").i(log))
+//                .setLevel(HttpLoggingInterceptor.Level.BODY);
     }
 
 

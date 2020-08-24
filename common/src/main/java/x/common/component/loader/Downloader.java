@@ -24,7 +24,7 @@ public final class Downloader {
     private final Lazy<BackgroundXScheduler> io = Lazy.by(() -> Hummingbird.visit(BackgroundXScheduler.class));
     private final Uri uri;
     private final FileOperator operator;
-    private XScheduler dispatcher = Hummingbird.visit(MainXScheduler.class);
+    private XScheduler dispatcher;
 
     Downloader(@NonNull Uri uri, @NonNull FileOperator operator) {
         this.uri = uri;
@@ -60,7 +60,8 @@ public final class Downloader {
     }
 
     private DownloadTask createTask(DownloadListener listener) {
-        return new DownloadTask(uri, operator, dispatcher, listener);
+        XScheduler scheduler = dispatcher != null ? dispatcher : Hummingbird.visit(MainXScheduler.class);
+        return new DownloadTask(uri, operator, scheduler, listener);
     }
 
 

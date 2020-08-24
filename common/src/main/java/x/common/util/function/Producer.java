@@ -1,4 +1,4 @@
-package x.common.component;
+package x.common.util.function;
 
 /**
  * Author: cxx

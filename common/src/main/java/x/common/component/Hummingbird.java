@@ -60,6 +60,7 @@ public final class Hummingbird {
         return sClient.get();
     }
 
+    @NonNull
     public static <T> T visit(@NonNull Class<T> tClass) {
         T result = byRegisteredStateful(tClass);
         if (result != null) return result;
@@ -70,7 +71,7 @@ public final class Hummingbird {
         result = (T) sCached.get(tClass);
         if (result == null) {
             result = byAnnotationProcessor(tClass);
-            sCached.put(tClass, result);
+            sCached.put(tClass, Utils.requireNonNull(result, "AnnotationProcessor returned null"));
         } else if (sClient.get().loggable()) {
             Logger.getLogger(TAG).v("hit cached: " + tClass.getName() + '=' + result.getClass().getName());
         }
@@ -115,6 +116,7 @@ public final class Hummingbird {
         return (T) sCachedStateless.get(tClass);
     }
 
+    @NonNull
     private static <T> T byAnnotationProcessor(Class<T> tClass) {
         AnnotationProcessor processor;
         for (Annotation a : tClass.getAnnotations()) {

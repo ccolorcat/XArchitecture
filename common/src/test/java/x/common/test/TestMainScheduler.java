@@ -18,4 +18,9 @@ final class TestMainScheduler extends SchedulerWrapper implements MainXScheduler
     public void removeAll() {
 
     }
+
+    @Override
+    public boolean has(Runnable task) {
+        return false;
+    }
 }
