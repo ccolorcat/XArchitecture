@@ -20,8 +20,8 @@ final class AndroidApiFactoryProvider extends ApiFactoryProviderImpl {
 
     @Override
     protected Cache makeCache(IClient client) {
-        IAppClient androidClient = (IAppClient) client;
-        File cacheDir = new File(androidClient.getApplication().getCacheDir(), "netCache");
+        IAppClient appClient = client.asAppClient();
+        File cacheDir = new File(appClient.cacheDir(), "OkCache");
         if (cacheDir.exists() || cacheDir.mkdirs()) {
             return new Cache(cacheDir, 1024 * 1024 * 50);
         }
