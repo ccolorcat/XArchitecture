@@ -26,7 +26,7 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioRecorder {
-    private FakeOptional<MediaRecorder> recorder;
+    private FakeOptional<MediaRecorder> recorder = FakeOptional.empty();
     private final Lazy<BackgroundXScheduler> scheduler = Lazy.by(() -> Hummingbird.visit(BackgroundXScheduler.class));
     private final Lazy<LinkedHashSet<StateListener>> listeners = Lazy.by(LinkedHashSet::new);
     private final Runnable volumeTask = this::updateVolume;
@@ -42,7 +42,7 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @Override
     public boolean prepare(@NonNull File save) {
         savePath = Utils.requireNonNull(save, "save == null");
-        if (recorder == null) recorder = FakeOptional.of(new MediaRecorder());
+        if (!recorder.isPresent()) recorder = FakeOptional.of(new MediaRecorder());
         boolean result = recorder.safeIfPresent((it) -> {
             // 录制的音频通道数
             it.setAudioChannels(1);
@@ -118,9 +118,12 @@ final class AudioRecorderImpl extends XObservableImpl<Integer> implements AudioR
     @Override
     public void release() {
         savePath = null;
-        mState = null;
+        if (mState == State.STARTED || mState == State.RESUMED) {
+            mState = null;
+            recorder.safeIfPresent(MediaRecorder::stop);
+        }
         recorder.safeIfPresent(MediaRecorder::release);
-        recorder = null;
+        recorder = FakeOptional.empty();
         if (listeners.initialized()) listeners.get().clear();
         removeVolumeTask();
     }
