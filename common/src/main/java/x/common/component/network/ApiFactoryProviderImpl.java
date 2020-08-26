@@ -14,6 +14,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
 import x.common.IClient;
+import x.common.component.Hummingbird;
 import x.common.util.Utils;
 
 /**
@@ -22,6 +23,7 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
+    private final CommonInterceptor interceptor = Hummingbird.visit(CommonInterceptor.class);
     private final Cache cache;
     private final boolean loggable;
 
@@ -31,11 +33,17 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
     }
 
     @Override
+    protected ApiFactory create(String baseUrl) {
+        return new SignApiFactory(newRetrofit(baseUrl));
+    }
+
+    @Override
     protected Retrofit newRetrofit(String baseUrl) {
 //        return RetrofitManager.getRetrofit(baseUrl);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true);
+                .retryOnConnectionFailure(true)
+                .addInterceptor(interceptor);
         if (cache != null) builder.cache(cache);
         if (loggable) {
             builder.addInterceptor(createLoggingInterceptor())

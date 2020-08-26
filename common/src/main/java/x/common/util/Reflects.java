@@ -27,6 +27,15 @@ public final class Reflects {
         return constructor.newInstance();
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <F, C extends F> C search(F[] fs, Class<C> cls) {
+        for (F f : fs) {
+            if (cls.isInstance(f)) return (C) f;
+        }
+        return null;
+    }
+
     private Reflects() {
         throw new AssertionError("no instance");
     }

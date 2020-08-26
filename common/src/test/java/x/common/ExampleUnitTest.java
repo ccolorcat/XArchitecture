@@ -3,10 +3,12 @@ package x.common;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import x.common.component.Hummingbird;
 import x.common.component.finder.DownloadWriter;
 import x.common.component.finder.FileOperator;
@@ -52,8 +54,13 @@ public class ExampleUnitTest {
     @Test
     public void testMoocApiModel() throws IOException {
         TestMoocApi model = Hummingbird.visit(TestMoocApi.class);
-        String result = model.listCourses(4, 30).execute();
-        LOGGER.v(result);
+        String result;
+//        result = model.testCourses("api", "teacher", 4, 30).execute();
+//        result = model.listCourses(4, 30).execute();
+        result = model.listCourses(4, 30).execute();
+//        String result = model.getCourses("http://www.imooc.com/api/teacher", 4, 30).execute();
+//        String result = model.getCourses(null, 4, 30).execute();
+//        LOGGER.v(result);
         assertNotNull(result);
     }
 
@@ -66,6 +73,13 @@ public class ExampleUnitTest {
         assertTrue(model.savePersons(original));
         List<Person> persons = model.loadPersons();
         assertEquals(original, persons);
+
+        assertTrue(model.remove());
+        assertNull(model.loadPersons());
+
+        assertTrue(model.savePersons(original));
+        List<Person> persons2 = model.loadPersons();
+        assertEquals(original, persons2);
 
         assertTrue(model.remove());
         assertNull(model.loadPersons());
@@ -99,7 +113,34 @@ public class ExampleUnitTest {
 
     @Test
     public void genericTest() {
+        String url = "https://haha.cxx@dldir1.qq.com:80/weixin/mac/WeChatMac.dmg?k1=v1#ha";
+        System.out.println(url);
+        HttpUrl httpUrl = HttpUrl.get(url);
+        System.out.println(httpUrl);
+        System.out.println(httpUrl.redact());
+        URI uri = httpUrl.uri();
+        System.out.println(uri.getPath());
+        System.out.println(uri.getAuthority());
+        System.out.println(uri.getHost());
+        System.out.println("-------------");
 
+        HttpUrl hurl = httpUrl.newBuilder().username("").password("").build();
+        System.out.println(hurl.toString());
+        System.out.println(hurl.host());
+
+        System.out.println("-------path---------");
+//        String newPath = "/{cxx}/{user}/haha";
+        String newPath = "/cxx/{user}/haha";
+        String path = newPath.replaceAll("\\{((?!/).)+}", "((?!/).)+");
+        System.out.println(newPath);
+        System.out.println(path);
+
+        String test = "https://dldir1.qq.com:80/cxx/userqqqqq/haha";
+        URI newUri = hurl.uri().resolve(path);
+        System.out.println(test);
+        System.out.println(newUri);
+        System.out.println(test.matches(newUri.toString()));
+        System.out.println(test.matches(test));
     }
 
     private void pause() {

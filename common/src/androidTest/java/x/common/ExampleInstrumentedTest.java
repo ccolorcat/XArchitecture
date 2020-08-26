@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -12,6 +13,7 @@ import x.common.component.Hummingbird;
 import x.common.component.loader.DownloadListener;
 import x.common.component.loader.ObjectLoader;
 import x.common.component.log.Logger;
+import x.common.util.StoreReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,6 +39,14 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("x.common.test", appContext.getPackageName());
+    }
+
+    @Test
+    public void testStoreReader() throws Throwable {
+        JSONObject object = new JSONObject();
+        object.put("size", "123");
+        StoreReader reader = StoreReader.fromJson(null);
+        assertEquals(reader.getInt("size", 0), 123);
     }
 
     @Test

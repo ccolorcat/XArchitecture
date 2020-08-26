@@ -1,11 +1,10 @@
 package x.common.component.network;
 
-
 /**
  * Author: cxx
- * Date: 2020-07-27
+ * Date: 2020-08-25
  * GitHub: https://github.com/ccolorcat
  */
-public interface TokenProvider {
-    String getToken();
+public enum SignType {
+    NONE, USER, ORG
 }

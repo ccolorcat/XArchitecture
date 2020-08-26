@@ -3,6 +3,7 @@ package x.common;
 import java.util.List;
 
 import x.common.component.annotation.StoreModel;
+import x.common.component.store.Clear;
 import x.common.component.store.Read;
 import x.common.component.store.Remove;
 import x.common.component.store.Write;
@@ -23,4 +24,7 @@ public interface TestStoreModel {
 
     @Remove(PERSONS)
     boolean remove();
+
+    @Clear
+    boolean clear();
 }

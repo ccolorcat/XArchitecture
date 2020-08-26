@@ -44,13 +44,21 @@ final class StoreHandler implements InvocationHandler {
 
     private StoreExecutor parse(Method method, Object[] args) {
         Annotation[] annotations = method.getDeclaredAnnotations();
-        Read read = search(annotations, Read.class);
-        if (read != null) return newReadExecutor(method, annotations, read);
-        Remove remove = search(annotations, Remove.class);
-        if (remove != null) return newRemoveExecutor(method, annotations, remove, args);
-        Clear clear = search(annotations, Clear.class);
-        if (clear != null) return newClearExecutor(method, annotations, args);
+        for (Annotation a : annotations) {
+            if (a instanceof Read) return newReadExecutor(method, annotations, (Read) a);
+            if (a instanceof Remove) return newRemoveExecutor(method, annotations, (Remove) a, args);
+            if (a instanceof Clear) return newClearExecutor(method, annotations, args);
+        }
         return newWriteExecutor(method, args);
+
+
+//        Read read = Reflects.search(annotations, Read.class);
+//        if (read != null) return newReadExecutor(method, annotations, read);
+//        Remove remove = Reflects.search(annotations, Remove.class);
+//        if (remove != null) return newRemoveExecutor(method, annotations, remove, args);
+//        Clear clear = Reflects.search(annotations, Clear.class);
+//        if (clear != null) return newClearExecutor(method, annotations, args);
+//        return newWriteExecutor(method, args);
     }
 
     private StoreExecutor newReadExecutor(Method method, Annotation[] annotations, Read read) {
