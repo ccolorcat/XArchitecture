@@ -1,3 +1,6 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
 android {
     compileSdkVersion androidConfig.compileSdk
 
@@ -37,6 +40,8 @@ dependencies {
     androidTestImplementation(libraries.test.androidJunit)
     androidTestImplementation(libraries.test.androidEspressoCore)
 
+    implementation(libraries.android.kotlinStdlib)
+    implementation(libraries.android.coreKtx)
     implementation(libraries.android.appcompat)
     implementation(libraries.android.lifecycleExtensions)
     implementation(libraries.android.constraintlayout)

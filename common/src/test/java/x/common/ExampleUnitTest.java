@@ -44,6 +44,20 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testLogin() throws Throwable {
+        AccountService service = Hummingbird.visit(AccountService.class);
+        Object result = service.loginWithPassword(
+                "18986430015",
+                "cl031018",
+                "teamix-app-android",
+                "123456",
+                "password",
+                "openid offline_access workapps.client api.workapps.open api.workapps.user"
+        ).execute();
+        LOGGER.v("loginResult: " + result);
+    }
+
+    @Test
     public void testApiModel() throws IOException {
         TestApiModel model = Hummingbird.visit(TestApiModel.class);
         String result = model.search("测试").execute();
