@@ -47,7 +47,7 @@ public class ExampleUnitTest {
     public void testApiModel() throws IOException {
         TestApiModel model = Hummingbird.visit(TestApiModel.class);
         String result = model.search("测试").execute();
-        LOGGER.v(result);
+//        LOGGER.v(result);
         assertNotNull(result);
     }
 

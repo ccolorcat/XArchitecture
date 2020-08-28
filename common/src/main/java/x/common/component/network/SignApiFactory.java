@@ -21,7 +21,6 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Url;
 import x.common.component.Hummingbird;
-import x.common.component.Lazy;
 import x.common.util.Reflects;
 import x.common.util.Utils;
 
@@ -31,8 +30,8 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 final class SignApiFactory implements ApiFactory {
-    private final Lazy<CommonInterceptor> interceptor = Lazy.by(() -> Hummingbird.visit(CommonInterceptor.class));
-    private final Set<Method> parsed = new CopyOnWriteArraySet<>();
+    private final CommonInterceptor interceptor = Hummingbird.visit(CommonInterceptor.class);
+    private final Set<Method> marked = new CopyOnWriteArraySet<>();
     private final Retrofit retrofit;
     private final String baseUrlTrunk;
 
@@ -50,7 +49,7 @@ final class SignApiFactory implements ApiFactory {
 
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (parsed.contains(method)) return method.invoke(impl, args);
+                if (marked.contains(method)) return method.invoke(impl, args);
 
                 final Sign sign = method.getAnnotation(Sign.class);
                 final SignType type;
@@ -60,40 +59,40 @@ final class SignApiFactory implements ApiFactory {
 
                 String mark = parseMark(method, args);
                 if (mark != null) {
-                    interceptor.get().mark(mark, type);
-                    parsed.add(method);
+                    interceptor.mark(mark, type);
+                    marked.add(method);
                 }
                 return method.invoke(impl, args);
             }
-
-            private String parseMark(Method method, Object[] args) {
-                String path = parsePath(method);
-                if (Utils.isNotEmpty(path)) {
-                    // 将 path 中的 "{xx}" (其中 xx 可以是 "/" 以外的任意字符) 替换为 "((?!/).)+" 以使 path 部分可以正则匹配。
-                    return URI.create(baseUrlTrunk)
-                            .resolve(path.replaceAll("\\{((?!/).)+}", "((?!/).)+"))
-                            .toString();
-                }
-                Annotation[][] pas = method.getParameterAnnotations();
-                if (pas.length > 0 && Reflects.search(pas[0], Url.class) != null) {
-                    return Urls.getUrlTrunk(args[0].toString());
-                }
-                return null;
-            }
-
-            private String parsePath(Method method) {
-                for (Annotation a : method.getDeclaredAnnotations()) {
-                    if (a instanceof GET) return ((GET) a).value();
-                    if (a instanceof POST) return ((POST) a).value();
-                    if (a instanceof PUT) return ((PUT) a).value();
-                    if (a instanceof DELETE) return ((DELETE) a).value();
-                    if (a instanceof HEAD) return ((HEAD) a).value();
-                    if (a instanceof PATCH) return ((PATCH) a).value();
-                    if (a instanceof OPTIONS) return ((OPTIONS) a).value();
-                    if (a instanceof HTTP) return ((HTTP) a).path();
-                }
-                return null;
-            }
         });
+    }
+
+    private String parseMark(Method method, Object[] args) {
+        String path = parsePath(method);
+        if (Utils.isNotEmpty(path)) {
+            // 将 path 中的 "{xx}" (其中 xx 可以是 "/" 以外的任意字符) 替换为 "((?!/).)+" 以使 path 部分可以正则匹配。
+            return URI.create(baseUrlTrunk)
+                    .resolve(path.replaceAll("\\{((?!/).)+}", "((?!/).)+"))
+                    .toString();
+        }
+        Annotation[][] pas = method.getParameterAnnotations();
+        if (pas.length > 0 && Reflects.search(pas[0], Url.class) != null) {
+            return Urls.getUrlTrunk(args[0].toString());
+        }
+        return null;
+    }
+
+    private static String parsePath(Method method) {
+        for (Annotation a : method.getDeclaredAnnotations()) {
+            if (a instanceof GET) return ((GET) a).value();
+            if (a instanceof POST) return ((POST) a).value();
+            if (a instanceof PUT) return ((PUT) a).value();
+            if (a instanceof DELETE) return ((DELETE) a).value();
+            if (a instanceof HEAD) return ((HEAD) a).value();
+            if (a instanceof PATCH) return ((PATCH) a).value();
+            if (a instanceof OPTIONS) return ((OPTIONS) a).value();
+            if (a instanceof HTTP) return ((HTTP) a).path();
+        }
+        return null;
     }
 }
