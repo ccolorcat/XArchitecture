@@ -74,7 +74,7 @@ public class XObservableImpl<T> implements XObservable<T> {
         return observer != null && this.observers.contains(observer);
     }
 
-    protected final void update(@NonNull T value) {
+    protected void update(@NonNull T value) {
         if (this.value != Utils.requireNonNull(value, "value == null")) {
             this.value = value;
             if (scheduler == null) {

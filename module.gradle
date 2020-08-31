@@ -31,6 +31,10 @@ android {
         sourceCompatibility = javaCompileOptions.source
         targetCompatibility = javaCompileOptions.target
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
