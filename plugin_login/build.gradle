@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-    testImplementation(project(path: ':test'))
+    testImplementation(project(path: ':test_support'))
 
     implementation(project(path: ':common'))
 }

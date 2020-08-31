@@ -8,7 +8,7 @@ android {
 }
 
 dependencies {
-    testImplementation(project(path: ':test'))
+    testImplementation(project(path: ':test_support'))
 
     implementation(libraries.remote.okhttp)
     implementation(libraries.remote.okhttpLoggingInterceptor)
