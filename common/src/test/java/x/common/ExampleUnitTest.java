@@ -68,7 +68,7 @@ public class ExampleUnitTest {
     public void testStoreModel() {
         List<Person> original = new ArrayList<>();
         original.add(new Person("John", 34, true));
-        original.add(new Person("Tom", 3, true));
+        original.add(new Person("Tom", 3, false));
         TestStoreModel model = Hummingbird.visit(TestStoreModel.class);
         assertTrue(model.savePersons(original));
         List<Person> persons = model.loadPersons();
@@ -80,9 +80,14 @@ public class ExampleUnitTest {
         assertTrue(model.savePersons(original));
         List<Person> persons2 = model.loadPersons();
         assertEquals(original, persons2);
+//
+//        assertTrue(model.savePersons(original));
+//        List<Person> persons2 = model.loadPersons();
+//        assertEquals(original, persons2);
 
-        assertTrue(model.remove());
-        assertNull(model.loadPersons());
+
+//        assertTrue(model.remove());
+//        assertNull(model.loadPersons());
     }
 
     @Test

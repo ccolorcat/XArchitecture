@@ -148,13 +148,17 @@ final class DiskCache {
     }
 
     private void deleteSnapshot(@NonNull Snapshot snapshot) throws IOException {
-        File clean = snapshot.getCleanFile();
-        if (clean.exists()) {
-            long length = clean.length();
-            deleteIfExists(clean);
-            if (snapshots.remove(snapshot.key) != null) {
-                size -= length;
+        try {
+            File clean = snapshot.getCleanFile();
+            if (clean.exists()) {
+                long length = clean.length();
+                deleteIfExists(clean);
+                if (snapshots.remove(snapshot.key) != null) {
+                    size -= length;
+                }
             }
+        } finally {
+            snapshot.requiredDelete = false;
         }
     }
 

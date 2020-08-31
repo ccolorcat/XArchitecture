@@ -21,7 +21,8 @@ public final class TestInitializer {
         IClient client = new TestClient();
         Hummingbird.init(client);
         Hummingbird.registerStateless(LogPrinter.class, new TestLogPrinter());
-        Hummingbird.registerStateless(StoreFactoryProvider.class, new TestStoreFactoryProvider(client));
+//        Hummingbird.registerStateless(StoreFactoryProvider.class, new TestStoreFactoryProvider(client));
+        Hummingbird.registerStateless(StoreFactoryProvider.class, new DiskStoreFactoryProvider(client));
         Hummingbird.registerStateless(ApiFactoryProvider.class, new ApiFactoryProviderImpl(Hummingbird.getClient()));
         Hummingbird.registerStateless(MainXScheduler.class, new TestMainScheduler());
         Hummingbird.registerStateless(BackgroundHandlerXScheduler.class, new TestBackgroundHandlerXScheduler());
