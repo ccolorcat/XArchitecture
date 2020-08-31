@@ -8,13 +8,12 @@ import x.common.IClient;
  * Date: 2020-07-27
  * GitHub: https://github.com/ccolorcat
  */
-final class TokenProviderImpl implements TokenProvider {
-    private TokenProviderImpl(IClient client) {
-
+final class AuthorizationProviderImpl implements AuthorizationProvider {
+    private AuthorizationProviderImpl(IClient client) {
     }
 
     @Override
-    public String getToken() {
+    public String getAuthorization() {
         return "empty";
     }
 }

@@ -58,8 +58,7 @@ final class SignApiFactory implements ApiFactory {
                 }
 
                 String mark = parseMark(method, args);
-                if (mark != null) {
-                    interceptor.mark(mark, type);
+                if (mark != null && interceptor.mark(mark, type)) {
                     marked.add(method);
                 }
                 return method.invoke(impl, args);

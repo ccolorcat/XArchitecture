@@ -17,7 +17,7 @@ import x.common.component.finder.FinderCore;
 import x.common.component.finder.Module;
 import x.common.component.log.Logger;
 import x.common.component.schedule.BackgroundXScheduler;
-import x.common.test.TestManager;
+import x.test.TestInitializer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,27 +34,13 @@ public class ExampleUnitTest {
     private static final Logger LOGGER;
 
     static {
-        TestManager.init();
+        TestInitializer.init();
         LOGGER = Logger.getLogger("TEST");
     }
 
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
-    }
-
-    @Test
-    public void testLogin() throws Throwable {
-        AccountService service = Hummingbird.visit(AccountService.class);
-        Object result = service.loginWithPassword(
-                "18986430015",
-                "cl031018",
-                "teamix-app-android",
-                "123456",
-                "password",
-                "openid offline_access workapps.client api.workapps.open api.workapps.user"
-        ).execute();
-        LOGGER.v("loginResult: " + result);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package x.common;
+package cc.colorcat.login;
 
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

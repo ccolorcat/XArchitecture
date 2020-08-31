@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
  * GitHub: https://github.com/ccolorcat
  */
 public interface ApiCallback<T> {
-    void onStart();
+    default void onStart() {}
 
-    void onSuccess(@NonNull T data);
+    default void onSuccess(@NonNull T data) {}
 
-    void onFailure(@NonNull ApiException cause);
+    default void onFailure(@NonNull ApiException cause) {}
 
-    void onFinish();
+    default void onFinish() {}
 }

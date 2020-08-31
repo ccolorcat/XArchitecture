@@ -72,9 +72,9 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
 
     private static class CommonParamsInterceptor implements Interceptor {
         private final String userAgent;
-        private final TokenProvider provider;
+        private final AuthorizationProvider provider;
 
-        private CommonParamsInterceptor(String userAgent, TokenProvider provider) {
+        private CommonParamsInterceptor(String userAgent, AuthorizationProvider provider) {
             this.userAgent = userAgent;
             this.provider = provider;
         }
@@ -83,8 +83,8 @@ public class ApiFactoryProviderImpl extends BaseApiFactoryProvider {
         @Override
         public Response intercept(@NonNull Chain chain) throws IOException {
             Request.Builder builder = chain.request().newBuilder().header("User-Agent", userAgent);
-            String token = provider.getToken();
-            if (!Utils.isEmpty(token)) builder.header("Authorization", "Bearer " + provider.getToken());
+            String token = provider.getAuthorization();
+            if (!Utils.isEmpty(token)) builder.header("Authorization", provider.getAuthorization());
             return chain.proceed(builder.build());
         }
     }

@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 import x.common.util.Utils;
@@ -23,8 +22,8 @@ final class CommonInterceptorImpl implements CommonInterceptor {
     private static final String AUTHORIZATION = "Authorization";
     private static final String USER_AGENT = "User-Agent";
 
-    private final ConcurrentMap<SignType, TokenProvider> signTypeProviders = new ConcurrentHashMap<>();
-    private final ConcurrentMap<String, TokenProvider> signMarkProviders = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SignType, AuthorizationProvider> signTypeProviders = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, AuthorizationProvider> signMarkProviders = new ConcurrentHashMap<>();
     private CommonQueriesProvider queriesProvider = Collections::emptyMap;
     private UserAgentProvider uaProvider = () -> "";
 
@@ -42,26 +41,28 @@ final class CommonInterceptorImpl implements CommonInterceptor {
     }
 
     @Override
-    public void registerTokenProvider(@NonNull SignType type, @NonNull TokenProvider provider) {
+    public void registerAuthorizationProvider(@NonNull SignType type, @NonNull AuthorizationProvider provider) {
         signTypeProviders.put(Utils.requireNonNull(type), Utils.requireNonNull(provider));
     }
 
     @Override
-    public void unregisterTokenProvider(@NonNull SignType type) {
+    public void unregisterAuthorizationProvider(@NonNull SignType type) {
         signTypeProviders.remove(Utils.requireNonNull(type));
     }
 
     @Override
-    public void mark(@NonNull String mark, @NonNull SignType type) {
-        TokenProvider provider = signTypeProviders.get(Utils.requireNonNull(type));
+    public boolean mark(@NonNull String mark, @NonNull SignType type) {
+        AuthorizationProvider provider = signTypeProviders.get(Utils.requireNonNull(type));
         if (provider != null) {
             signMarkProviders.put(Utils.requireNonNull(mark), provider);
+            return true;
         }
+        return false;
     }
 
     @NonNull
     @Override
-    public Response intercept(@NonNull Interceptor.Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         final Request request = chain.request();
         final HttpUrl url = request.url();
         final Request.Builder builder = request.newBuilder();
@@ -72,10 +73,11 @@ final class CommonInterceptorImpl implements CommonInterceptor {
         }
 
         if (request.header(AUTHORIZATION) == null) {
-            TokenProvider provider = queryProvider(Urls.getUrlTrunk(url.toString()));
+            AuthorizationProvider provider = queryProvider(Urls.getUrlTrunk(url.toString()));
             String token;
-            if (provider != null && Utils.isNotEmpty((token = provider.getToken()))) {
-                builder.header("Authorization", "Bearer " + token);
+            if (provider != null && Utils.isNotEmpty((token = provider.getAuthorization()))) {
+//                builder.header("Authorization", "Bearer " + token);
+                builder.header("Authorization", token);
             }
         }
 
@@ -91,9 +93,9 @@ final class CommonInterceptorImpl implements CommonInterceptor {
         return chain.proceed(builder.build());
     }
 
-    private TokenProvider queryProvider(String urlTrunk) {
-        TokenProvider provider = null;
-        for (Map.Entry<String, TokenProvider> entry : signMarkProviders.entrySet()) {
+    private AuthorizationProvider queryProvider(String urlTrunk) {
+        AuthorizationProvider provider = null;
+        for (Map.Entry<String, AuthorizationProvider> entry : signMarkProviders.entrySet()) {
             if (urlTrunk.equals(entry.getKey())) return entry.getValue();
             if (urlTrunk.matches(entry.getKey())) provider = entry.getValue();
         }

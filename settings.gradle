@@ -1,3 +1,4 @@
+include ':test'
 import groovy.xml.XmlUtil
 
 void includeWithApi(String... pluginPaths) {

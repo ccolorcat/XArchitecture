@@ -1,4 +1,4 @@
-package x.common.test;
+package x.test;
 
 import androidx.annotation.NonNull;
 

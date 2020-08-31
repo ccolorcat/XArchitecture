@@ -1,9 +1,9 @@
-package x.common
+package cc.colorcat.login
 
 import org.junit.Test
 import x.common.component.Hummingbird
 import x.common.component.log.Logger
-import x.common.test.TestManager
+import x.test.TestInitializer
 
 /**
  * Author: cxx
@@ -12,7 +12,7 @@ import x.common.test.TestManager
  */
 class ApiUnitTest {
     init {
-        TestManager.init()
+        TestInitializer.init()
     }
 
     @Test

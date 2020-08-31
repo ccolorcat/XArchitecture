@@ -1,4 +1,4 @@
-package x.common.test;
+package x.test;
 
 
 import x.common.component.schedule.MainXScheduler;

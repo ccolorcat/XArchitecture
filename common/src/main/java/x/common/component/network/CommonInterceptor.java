@@ -16,9 +16,9 @@ public interface CommonInterceptor extends Interceptor {
 
     void setUserAgentProvider(@NonNull UserAgentProvider provider);
 
-    void registerTokenProvider(@NonNull SignType type, @NonNull TokenProvider provider);
+    void registerAuthorizationProvider(@NonNull SignType type, @NonNull AuthorizationProvider provider);
 
-    void unregisterTokenProvider(@NonNull SignType type);
+    void unregisterAuthorizationProvider(@NonNull SignType type);
 
-    void mark(@NonNull String mark, @NonNull SignType type);
+    boolean mark(@NonNull String mark, @NonNull SignType type);
 }

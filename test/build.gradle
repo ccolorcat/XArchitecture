@@ -2,15 +2,11 @@ apply plugin: 'com.android.library'
 apply from: rootProject.file('module.gradle')
 
 android {
-    resourcePrefix("login_")
-
     defaultConfig {
         consumerProguardFiles "consumer-rules.pro"
     }
 }
 
 dependencies {
-    testImplementation(project(path: ':test'))
-
-    implementation(project(path: ':common'))
+    implementation project(path: ':common')
 }
