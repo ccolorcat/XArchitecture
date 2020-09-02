@@ -8,6 +8,7 @@ import java.util.Map;
 
 import x.common.IClient;
 import x.common.util.Reflects;
+import x.common.util.Utils;
 
 
 /**
@@ -25,7 +26,11 @@ public final class CoreProcessor<T> implements AnnotationProcessor<T, Core> {
         Object result = cached.get(tClass);
         if (result == null) {
             Class<?> impl = annotation.value();
-            if (impl == Void.class || !Checker.assertImpl(tClass, impl)) impl = tClass;
+            if (impl == Void.class) {
+                String className = annotation.className();
+                impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
+            }
+            Checker.assertImpl(tClass, impl);
             result = newInstance(impl, client);
             cached.put(tClass, result);
         }

@@ -24,10 +24,11 @@ public final class StatelessProcessor<T> implements AnnotationProcessor<T, State
         Object result = cached.get(tClass);
         if (result == null) {
             Class<?> impl = annotation.value();
-            if (impl == Void.class || !Checker.assertImpl(tClass, impl)) {
+            if (impl == Void.class) {
                 String className = annotation.className();
                 impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
             }
+            Checker.assertImpl(tClass, impl);
             result = Reflects.newDefaultInstance(impl);
             cached.put(tClass, result);
         }

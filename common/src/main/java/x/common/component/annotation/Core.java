@@ -16,4 +16,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Core {
     Class<?> value() default Void.class;
+
+    String className() default "";
 }
