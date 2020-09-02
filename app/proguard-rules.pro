@@ -100,7 +100,6 @@
 #-keep, allowobfuscation class * implements @x.common.component.annotation.* * {*;}
 #-keep class * implements @x.common.component.annotation.Stateful * {*;}
 #-keep class * implements @x.common.component.annotation.Stateless * {*;}
-#-keep class * implements @x.common.component.annotation.* * {*;}
 
 #-keepclassmembers,allowshrinking,allowobfuscation interface * {
 #    @x.common.component.annotation.* <methods>;
