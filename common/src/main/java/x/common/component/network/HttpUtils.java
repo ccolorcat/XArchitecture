@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
  * Date: 2020-08-26
  * GitHub: https://github.com/ccolorcat
  */
-final class Urls {
+final class HttpUtils {
     static String getUrlTrunk(@NonNull String url) {
         String result = url.replaceAll("//(.)+@", "//");
         int index = result.indexOf('?');
@@ -16,7 +16,16 @@ final class Urls {
         return result;
     }
 
-    private Urls() {
+    static boolean needBody(@NonNull String method) {
+        return "POST".equals(method)
+                || "PUT".equals(method)
+                || "PATCH".equals(method)
+                || "PROPPATCH".equals(method)
+                || "DELETE".equals(method)
+                || "REPORT".equals(method);
+    }
+
+    private HttpUtils() {
         throw new AssertionError("no instance");
     }
 }

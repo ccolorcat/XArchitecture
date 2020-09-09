@@ -7,6 +7,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import x.common.IClient;
 import x.common.component.annotation.AnnotationProcessor;
@@ -15,12 +16,11 @@ import x.common.component.annotation.ApiModelProcessor;
 import x.common.component.annotation.Core;
 import x.common.component.annotation.CoreProcessor;
 import x.common.component.annotation.Stateful;
-import x.common.component.annotation.StatefulProcess;
+import x.common.component.annotation.StatefulProcessor;
 import x.common.component.annotation.Stateless;
 import x.common.component.annotation.StatelessProcessor;
 import x.common.component.annotation.StoreModel;
 import x.common.component.annotation.StoreModelProcessor;
-import x.common.component.log.Logger;
 import x.common.util.Once;
 import x.common.util.Reflects;
 import x.common.util.Utils;
@@ -33,10 +33,8 @@ import x.common.util.Utils;
  */
 @SuppressWarnings({"unchecked", "rawtypes", "UnusedReturnValue"})
 public final class Hummingbird {
-    public static final String TAG = "Hummingbird";
-
-    private static final Map<Class<?>, Class<?>> sCachedStateful = new HashMap<>();
-    private static final Map<Class<?>, Object> sCachedStateless = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> sCachedStateful = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Object> sCachedStateless = new ConcurrentHashMap<>();
     private static final WeakHashMap<Class<?>, Object> sCached = new WeakHashMap<>();
     private static final Once<IClient> sClient = new Once<>();
     private static final Map<Class<? extends Annotation>, AnnotationProcessor> sProcessors = new HashMap<>();
@@ -46,7 +44,7 @@ public final class Hummingbird {
         sProcessors.put(Core.class, new CoreProcessor<>());
         sProcessors.put(ApiModel.class, new ApiModelProcessor<>());
         sProcessors.put(StoreModel.class, new StoreModelProcessor<>());
-        sProcessors.put(Stateful.class, new StatefulProcess<>());
+        sProcessors.put(Stateful.class, new StatefulProcessor<>());
         sProcessors.put(Stateless.class, new StatelessProcessor<>());
     }
 
@@ -62,20 +60,28 @@ public final class Hummingbird {
 
     @NonNull
     public static <T> T visit(@NonNull Class<T> tClass) {
-        T result = byRegisteredStateful(tClass);
-        if (result != null) return result;
-        result = byRegisteredStateless(tClass);
-        if (result != null) return result;
+        try {
+            T result = byRegisteredStateful(tClass);
+            if (result != null) return result;
+            result = byRegisteredStateless(tClass);
+            if (result != null) return result;
 
-        if (tClass.getAnnotation(Stateful.class) != null) return byAnnotationProcessor(tClass);
-        result = (T) sCached.get(tClass);
-        if (result == null) {
-            result = byAnnotationProcessor(tClass);
-            sCached.put(tClass, Utils.requireNonNull(result, "AnnotationProcessor returned null"));
-        } else if (sClient.get().loggable()) {
-            Logger.getLogger(TAG).v("hit cached: " + tClass.getName() + '=' + result.getClass().getName());
+            Stateful stateful = tClass.getAnnotation(Stateful.class);
+            if (stateful != null) return byStatefulProcessor(tClass, stateful);
+
+            result = (T) sCached.get(tClass);
+            if (result == null) {
+                synchronized (sCached) {
+                    if ((result = (T) sCached.get(tClass)) == null) {
+                        result = byAnnotationProcessor(tClass);
+                        sCached.put(tClass, Utils.requireNonNull(result, "AnnotationProcessor returned null"));
+                    }
+                }
+            }
+            return result;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
         }
-        return result;
     }
 
     public static <T> boolean registerStateless(@NonNull Class<? super T> tClass, @NonNull T impl) {
@@ -99,14 +105,10 @@ public final class Hummingbird {
     }
 
     @Nullable
-    private static <T> T byRegisteredStateful(@NonNull Class<T> tClass) {
+    private static <T> T byRegisteredStateful(@NonNull Class<T> tClass) throws Throwable {
         Class<?> impl = sCachedStateful.get(tClass);
         if (impl != null) {
-            try {
-                return (T) Reflects.newDefaultInstance(impl);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
+            return (T) Reflects.newDefaultInstance(impl);
         }
         return null;
     }
@@ -117,19 +119,22 @@ public final class Hummingbird {
     }
 
     @NonNull
-    private static <T> T byAnnotationProcessor(Class<T> tClass) {
+    private static <T> T byStatefulProcessor(@NonNull Class<T> tClass, @NonNull Stateful annotation) throws Throwable {
+        AnnotationProcessor processor = sProcessors.get(annotation.annotationType());
+        assert processor != null;
+        return (T) processor.process(tClass, annotation, sClient.get());
+    }
+
+    @NonNull
+    private static <T> T byAnnotationProcessor(Class<T> tClass) throws Throwable {
         AnnotationProcessor processor;
         for (Annotation a : tClass.getAnnotations()) {
             processor = sProcessors.get(a.annotationType());
             if (processor != null) {
-                try {
-                    return (T) processor.process(tClass, a, sClient.get());
-                } catch (Throwable t) {
-                    throw new RuntimeException(t);
-                }
+                return (T) processor.process(tClass, a, sClient.get());
             }
         }
-        throw new IllegalArgumentException("No AnnotationProcessor can process " + tClass);
+        throw new HummingbirdException("No AnnotationProcessor can process " + tClass);
     }
 
     private Hummingbird() {

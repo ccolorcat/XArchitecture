@@ -1,6 +1,7 @@
 package x.common.component.network;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 
@@ -18,6 +19,7 @@ final class AndroidApiFactoryProvider extends ApiFactoryProviderImpl {
         super(client);
     }
 
+    @Nullable
     @Override
     protected Cache makeCache(IClient client) {
         IAppClient appClient = client.asAppClient();

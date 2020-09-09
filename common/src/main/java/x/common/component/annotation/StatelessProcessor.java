@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import x.common.IClient;
 import x.common.component.XLruCache;
 import x.common.util.Reflects;
-import x.common.util.Utils;
 
 
 /**
@@ -21,17 +20,9 @@ public final class StatelessProcessor<T> implements AnnotationProcessor<T, State
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull Stateless annotation, @NonNull IClient client) throws Throwable {
-        Object result = cached.get(tClass);
-        if (result == null) {
-            Class<?> impl = annotation.value();
-            if (impl == Void.class) {
-                String className = annotation.className();
-                impl = Utils.isEmpty(className) ? tClass : Class.forName(className);
-            }
-            Checker.assertImpl(tClass, impl);
-            result = Reflects.newDefaultInstance(impl);
-            cached.put(tClass, result);
-        }
-        return (T) result;
+        return (T) cached.unsafeGetOrPut(tClass, () -> {
+            Class<?> impl = Parsers.requireImpl(tClass, annotation.value(), annotation.className());
+            return Reflects.newDefaultInstance(impl);
+        });
     }
 }

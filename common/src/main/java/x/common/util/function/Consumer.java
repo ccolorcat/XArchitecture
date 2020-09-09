@@ -5,6 +5,7 @@ package x.common.util.function;
  * Date: 2020-08-04
  * GitHub: https://github.com/ccolorcat
  */
-public interface Consumer<T> {
+public interface Consumer<T> extends ThrowableConsumer<T> {
+    @Override
     void consume(T t);
 }

@@ -73,11 +73,10 @@ final class CommonInterceptorImpl implements CommonInterceptor {
         }
 
         if (request.header(AUTHORIZATION) == null) {
-            AuthorizationProvider provider = queryProvider(Urls.getUrlTrunk(url.toString()));
-            String token;
-            if (provider != null && Utils.isNotEmpty((token = provider.getAuthorization()))) {
-//                builder.header("Authorization", "Bearer " + token);
-                builder.header("Authorization", token);
+            AuthorizationProvider provider = queryProvider(HttpUtils.getUrlTrunk(url.toString()));
+            String authorization;
+            if (provider != null && Utils.isNotEmpty((authorization = provider.getAuthorization()))) {
+                builder.header(AUTHORIZATION, authorization);
             }
         }
 

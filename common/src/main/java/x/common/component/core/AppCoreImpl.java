@@ -22,7 +22,7 @@ final class AppCoreImpl extends XObservableImpl<AppState> implements AppCore {
     }
 
     @SuppressWarnings("unused")
-    private class AppLifecycleListener implements LifecycleObserver {
+    public class AppLifecycleListener implements LifecycleObserver {
         @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
         public void onAppForegrounded() {
             update(AppState.FOREGROUNDED);

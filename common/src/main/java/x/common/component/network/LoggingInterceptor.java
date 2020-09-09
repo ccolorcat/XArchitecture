@@ -68,7 +68,7 @@ public class LoggingInterceptor implements Interceptor {
         appendHeaders(builder, "request header --> ", request.headers());
         RequestBody requestBody;
         MediaType requestType;
-        if (needBody(request.method())
+        if (HttpUtils.needBody(request.method())
                 && (requestBody = request.body()) != null
                 && (requestType = requestBody.contentType()) != null
                 && isText(requestType)) {
@@ -126,15 +126,6 @@ public class LoggingInterceptor implements Interceptor {
             builder.append(c);
         }
         return builder.toString();
-    }
-
-    private static boolean needBody(@NonNull String method) {
-        return "POST".equals(method)
-                || "PUT".equals(method)
-                || "PATCH".equals(method)
-                || "PROPPATCH".equals(method)
-                || "DELETE".equals(method)
-                || "REPORT".equals(method);
     }
 
     private static String decode(String unicode) {

@@ -16,6 +16,7 @@ import x.common.component.store.Write;
 @StoreModel(name = "test_model")
 public interface TestStoreModel {
     String PERSONS = "persons";
+    String USER = "user";
 
     boolean savePersons(@Write(PERSONS) List<Person> persons);
 
@@ -23,8 +24,17 @@ public interface TestStoreModel {
     List<Person> loadPersons();
 
     @Remove(PERSONS)
-    boolean remove();
+    boolean removePersons();
 
     @Clear
     boolean clear();
+
+
+    void saveUser(@Write(USER) User user);
+
+    @Read(USER)
+    User readUser();
+
+    @Remove(USER)
+    boolean removeUser();
 }

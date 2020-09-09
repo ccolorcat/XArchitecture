@@ -6,5 +6,5 @@ package x.common.component.network;
  * GitHub: https://github.com/ccolorcat
  */
 public enum SignType {
-    NONE, USER, ORG
+    NONE, USER, ORG, ANONYMOUS
 }

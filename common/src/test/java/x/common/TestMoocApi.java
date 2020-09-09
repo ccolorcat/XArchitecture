@@ -14,7 +14,7 @@ import x.common.component.network.VCall;
  * Date: 2020-08-21
  * GitHub: https://github.com/ccolorcat
  */
-@ApiModel(baseUrl = "http://test.cxx@www.imooc.com//")
+@ApiModel(baseUrl = "http://www.imooc.com/")
 public interface TestMoocApi {
 
     @Sign(SignType.USER)

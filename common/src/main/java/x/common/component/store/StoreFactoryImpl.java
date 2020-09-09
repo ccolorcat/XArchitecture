@@ -3,38 +3,39 @@ package x.common.component.store;
 import androidx.annotation.NonNull;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 
 import x.common.component.XLruCache;
 import x.common.util.Reflects;
-
+import x.common.util.Utils;
 
 /**
  * Author: cxx
- * Date: 2020-07-24
+ * Date: 2020-09-08
  * GitHub: https://github.com/ccolorcat
  */
-final class StoreHandler implements InvocationHandler {
-    private final XLruCache<Method, StoreExecutor> cachedExecutors;
+final class StoreFactoryImpl implements StoreFactory {
+    private final XLruCache<Method, StoreExecutor> cached = new XLruCache<>(16);
     private final Store store;
     private final StoreSerializer serializer;
 
-    StoreHandler(
-            @NonNull XLruCache<Method, StoreExecutor> cachedExecutors,
-            @NonNull Store store,
-            @NonNull StoreSerializer serializer
-    ) {
-        this.cachedExecutors = cachedExecutors;
-        this.store = store;
-        this.serializer = serializer;
+    StoreFactoryImpl(@NonNull Store store, @NonNull StoreSerializer serializer) {
+        this.store = Utils.requireNonNull(store, "store == null");
+        this.serializer = Utils.requireNonNull(serializer, "serializer == null");
     }
 
+    @SuppressWarnings("unchecked")
+    @NonNull
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.getDeclaringClass() == Object.class) return method.invoke(this, args);
-        return cachedExecutors.unsafeGetOrPut(method, () -> parse(method, args)).execute(args);
+    public <T> T create(@NonNull Class<T> tClass) {
+        return (T) Proxy.newProxyInstance(tClass.getClassLoader(), new Class[]{tClass}, (proxy, method, args) -> {
+            if (method.getDeclaringClass() == Object.class) {
+                return method.invoke(tClass, args);
+            }
+            return cached.unsafeGetOrPut(method, () -> parse(method, args)).execute(args);
+        });
     }
 
     @NonNull

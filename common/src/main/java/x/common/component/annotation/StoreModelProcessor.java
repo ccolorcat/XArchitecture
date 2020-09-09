@@ -21,17 +21,12 @@ public final class StoreModelProcessor<T> implements AnnotationProcessor<T, Stor
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull StoreModel annotation, @NonNull IClient client) throws Throwable {
-        Object result = cached.get(tClass);
-        if (result == null) {
-            result = create(tClass, annotation);
-            cached.put(tClass, result);
-        }
-        return (T) result;
+        return (T) cached.unsafeGetOrPut(tClass, () -> create(tClass, annotation));
     }
 
     private static <T> T create(Class<T> tClass, StoreModel annotation) throws Throwable {
         Class<?> impl = annotation.value();
-        if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);
+        if (impl != Void.class && Parsers.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);
         String name = annotation.name();
         return Hummingbird.visit(StoreFactoryProvider.class).of(name).create(tClass);
     }

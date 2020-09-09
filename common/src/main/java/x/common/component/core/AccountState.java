@@ -6,5 +6,5 @@ package x.common.component.core;
  * GitHub: https://github.com/ccolorcat
  */
 public enum AccountState {
-    STARTED, LOGGED_IN, LOGGED_OUT, STOPPED
+    INITIALIZED, LOGGED_IN, LOGGED_OUT, QUITTED
 }

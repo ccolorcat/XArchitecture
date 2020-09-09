@@ -24,18 +24,13 @@ public final class ApiModelProcessor<T> implements AnnotationProcessor<T, ApiMod
     @NonNull
     @Override
     public T process(@NonNull Class<T> tClass, @NonNull ApiModel annotation, @NonNull IClient client) throws Throwable {
-        Object result = cached.get(tClass);
-        if (result == null) {
-            result = create(tClass, annotation, client);
-            cached.put(tClass, result);
-        }
-        return (T) result;
+        return (T) cached.unsafeGetOrPut(tClass, () -> create(tClass, annotation, client));
     }
 
     @NonNull
     private static <T> T create(Class<T> tClass, ApiModel annotation, IClient client) throws Throwable {
         Class<?> impl = annotation.value();
-        if (impl != Void.class && Checker.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);
+        if (impl != Void.class && Parsers.assertImpl(tClass, impl)) return (T) Reflects.newDefaultInstance(impl);
         String baseUrl = Utils.emptyElse(annotation.baseUrl(), client.getBaseUrl());
         return Hummingbird.visit(ApiFactoryProvider.class).of(baseUrl).create(tClass);
     }

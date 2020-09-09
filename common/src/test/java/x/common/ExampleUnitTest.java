@@ -3,9 +3,13 @@ package x.common;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
@@ -60,8 +64,27 @@ public class ExampleUnitTest {
         result = model.listCourses(4, 30).execute();
 //        String result = model.getCourses("http://www.imooc.com/api/teacher", 4, 30).execute();
 //        String result = model.getCourses(null, 4, 30).execute();
-//        LOGGER.v(result);
+        LOGGER.v(result);
         assertNotNull(result);
+    }
+
+    @Test
+    public void testThreadSafe() {
+        Map<Object, Object> sets = new ConcurrentHashMap<>();
+        for (int i = 0; i < 100; ++i) {
+            final int non = i;
+            new Thread(() -> {
+                TestStoreModel result = Hummingbird.visit(TestStoreModel.class);
+                sets.put(result, "");
+                System.out.println(non + " visit: " + result + ", " + sets.size());
+            }).start();
+            new Thread(() -> {
+                Object result = Hummingbird.visit(FinderCore.class);
+                sets.put(result, "");
+                System.out.println(non + " visit: " + result + ", " + sets.size());
+            }).start();
+        }
+//        pause();
     }
 
     @Test
@@ -74,20 +97,17 @@ public class ExampleUnitTest {
         List<Person> persons = model.loadPersons();
         assertEquals(original, persons);
 
-        assertTrue(model.remove());
+        assertTrue(model.removePersons());
         assertNull(model.loadPersons());
 
         assertTrue(model.savePersons(original));
         List<Person> persons2 = model.loadPersons();
         assertEquals(original, persons2);
-//
-//        assertTrue(model.savePersons(original));
-//        List<Person> persons2 = model.loadPersons();
-//        assertEquals(original, persons2);
 
-
-//        assertTrue(model.remove());
-//        assertNull(model.loadPersons());
+        User user = new User("Tome");
+        model.saveUser(user);
+        User u2 = model.readUser();
+        assertEquals(user, u2);
     }
 
     @Test
@@ -148,12 +168,23 @@ public class ExampleUnitTest {
         System.out.println(test.matches(test));
     }
 
+    @Test
+    public void testUrlEncoder() throws UnsupportedEncodingException {
+        System.out.println(URLEncoder.encode("this is", "UTF-8"));
+    }
+
     private void pause() {
         synchronized (LOCK) {
             try {
                 LOCK.wait();
             } catch (InterruptedException ignore) {
             }
+        }
+    }
+
+    private void goon() {
+        synchronized (LOCK) {
+            LOCK.notify();
         }
     }
 }

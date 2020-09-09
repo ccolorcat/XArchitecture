@@ -19,14 +19,10 @@ public abstract class BaseApiFactoryProvider implements ApiFactoryProvider {
         if (!baseUrl.matches("^(http)(s)?://(.)+(/)$")) {
             throw new IllegalArgumentException("bad baseUrl: " + baseUrl);
         }
-        ApiFactory factory = factories.get(baseUrl);
-        if (factory == null) {
-            factory = create(baseUrl);
-            factories.put(baseUrl, factory);
-        }
-        return factory;
+        return factories.getOrPut(baseUrl, () -> create(baseUrl));
     }
 
+    @NonNull
     protected ApiFactory create(final String baseUrl) {
         return new ApiFactory() {
             private final Retrofit retrofit = newRetrofit(baseUrl);
@@ -39,13 +35,6 @@ public abstract class BaseApiFactoryProvider implements ApiFactoryProvider {
         };
     }
 
+    @NonNull
     protected abstract Retrofit newRetrofit(String baseUrl);
-
-//    public  <T> Observable<T> apply(Observable<T> observable) {
-//        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-//    }
-//
-//    public  <T> ObservableTransformer<T, T> transformer() {
-//        return upstream -> upstream.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-//    }
 }

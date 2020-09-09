@@ -30,14 +30,14 @@ import x.common.util.Utils;
  * GitHub: https://github.com/ccolorcat
  */
 final class SignApiFactory implements ApiFactory {
-    private final CommonInterceptor interceptor = Hummingbird.visit(CommonInterceptor.class);
+    private final CommonInterceptor commonInterceptor = Hummingbird.visit(CommonInterceptor.class);
     private final Set<Method> marked = new CopyOnWriteArraySet<>();
     private final Retrofit retrofit;
     private final String baseUrlTrunk;
 
     SignApiFactory(@NonNull Retrofit retrofit) {
         this.retrofit = Utils.requireNonNull(retrofit, "retrofit == null");
-        this.baseUrlTrunk = Urls.getUrlTrunk(retrofit.baseUrl().toString());
+        this.baseUrlTrunk = HttpUtils.getUrlTrunk(retrofit.baseUrl().toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -58,7 +58,7 @@ final class SignApiFactory implements ApiFactory {
                 }
 
                 String mark = parseMark(method, args);
-                if (mark != null && interceptor.mark(mark, type)) {
+                if (mark != null && commonInterceptor.mark(mark, type)) {
                     marked.add(method);
                 }
                 return method.invoke(impl, args);
@@ -76,7 +76,7 @@ final class SignApiFactory implements ApiFactory {
         }
         Annotation[][] pas = method.getParameterAnnotations();
         if (pas.length > 0 && Reflects.search(pas[0], Url.class) != null) {
-            return Urls.getUrlTrunk(args[0].toString());
+            return HttpUtils.getUrlTrunk(args[0].toString());
         }
         return null;
     }

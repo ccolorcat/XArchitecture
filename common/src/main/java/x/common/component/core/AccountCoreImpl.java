@@ -39,7 +39,7 @@ final class AccountCoreImpl extends XObservableImpl<AccountState> implements Acc
         @Override
         public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
             super.onActivityCreated(activity, savedInstanceState);
-            if (count == 0) update(AccountState.STARTED);
+            if (count == 0) update(AccountState.INITIALIZED);
             ++count;
         }
 
@@ -47,7 +47,7 @@ final class AccountCoreImpl extends XObservableImpl<AccountState> implements Acc
         public void onActivityDestroyed(@NonNull Activity activity) {
             super.onActivityDestroyed(activity);
             --count;
-            if (count == 0) update(AccountState.STOPPED);
+            if (count == 0) update(AccountState.QUITTED);
         }
     }
 }

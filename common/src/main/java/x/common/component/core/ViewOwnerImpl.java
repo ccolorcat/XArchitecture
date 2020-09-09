@@ -14,7 +14,7 @@ import x.common.util.Utils;
  * Date: 2020-07-30
  * GitHub: https://github.com/ccolorcat
  */
-class ViewOwnerImpl implements ViewOwner {
+final class ViewOwnerImpl implements ViewOwner {
     private final Map<Object, IBase.View> mCachedView = new HashMap<>();
 
     private ViewOwnerImpl() {}
