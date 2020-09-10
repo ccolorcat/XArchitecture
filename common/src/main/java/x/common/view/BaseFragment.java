@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 
 import x.common.component.Hummingbird;
+import x.common.component.core.PageTracker;
 import x.common.component.log.Logger;
 import x.common.contract.IAndroid;
 
@@ -29,6 +30,12 @@ public abstract class BaseFragment extends Fragment implements IAndroid.View, On
     @LayoutRes
     protected int getLayoutId() {
         return -1;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLifecycle().addObserver(Hummingbird.visit(PageTracker.class));
     }
 
     @Nullable

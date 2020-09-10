@@ -1,11 +1,14 @@
 package x.common.view;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import x.common.component.Hummingbird;
+import x.common.component.core.PageTracker;
 import x.common.component.runtime.RuntimeForActivity;
 import x.common.contract.IAndroid;
 
@@ -17,6 +20,12 @@ import x.common.contract.IAndroid;
  */
 public abstract class BaseActivity extends RuntimeForActivity implements IAndroid.View {
     private ShowableController sc;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLifecycle().addObserver(Hummingbird.visit(PageTracker.class));
+    }
 
     @Override
     public final boolean isActive() {
