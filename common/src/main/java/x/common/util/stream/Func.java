@@ -5,5 +5,5 @@ package x.common.util.stream;
  * Date: 2020-05-20
  * GitHub: https://github.com/ccolorcat
  */
-public interface Function {
+public interface Func {
 }
