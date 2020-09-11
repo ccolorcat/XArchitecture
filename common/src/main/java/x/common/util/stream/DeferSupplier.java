@@ -1,27 +1,29 @@
 package x.common.util.stream;
 
-import java.io.IOException;
+import androidx.annotation.NonNull;
+
+import x.common.util.Utils;
 
 /**
  * Author: cxx
  * Date: 2020-05-26
  * GitHub: https://github.com/ccolorcat
  */
-public class DeferSupplier<T> extends BaseSupplier<T> {
+public final class DeferSupplier<T> extends BaseSupplier<T> {
     private final Func0<? extends T> producer;
 
-    public DeferSupplier(Func0<? extends T> producer) {
-        this.producer = producer;
+    public DeferSupplier(@NonNull Func0<? extends T> producer) {
+        this.producer = Utils.requireNonNull(producer, "producer == null");
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() throws Throwable {
         super.hasNext();
         return true;
     }
 
     @Override
-    public T next() throws IOException {
+    public T next() throws Throwable {
         super.next();
         return producer.apply();
     }

@@ -9,7 +9,6 @@ abstract class Node<In, Out> {
     Node<? super Out, ?> next;
     Out result;
 
-
     void begin(long size) {
         next.begin(size);
     }

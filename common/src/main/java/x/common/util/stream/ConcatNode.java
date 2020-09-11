@@ -1,5 +1,9 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
+import x.common.util.Utils;
+
 /**
  * Author: cxx
  * Date: 2020-05-25
@@ -8,8 +12,8 @@ package x.common.util.stream;
 final class ConcatNode<T> extends Node<T, T> {
     private final FakeStream<? extends T> stream;
 
-    ConcatNode(FakeStream<? extends T> stream) {
-        this.stream = stream;
+    ConcatNode(@NonNull FakeStream<? extends T> stream) {
+        this.stream = Utils.requireNonNull(stream);
     }
 
     @Override

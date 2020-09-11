@@ -1,22 +1,26 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+
+import x.common.util.Utils;
 
 /**
  * Author: cxx
  * Date: 2020-05-22
  * GitHub: https://github.com/ccolorcat
  */
-public class CharReaderSupplier extends BaseSupplier<char[]> {
+public final class CharReaderSupplier extends BaseSupplier<char[]> {
     private final Reader reader;
     private final char[] buffer = new char[4096];
     private char[] chars;
 
-    public CharReaderSupplier(Reader reader) {
-        this.reader = buffer(reader);
+    public CharReaderSupplier(@NonNull Reader reader) {
+        this.reader = buffer(Utils.requireNonNull(reader, "reader == null"));
         try {
             preRead();
         } catch (IOException ignore) {
@@ -34,13 +38,13 @@ public class CharReaderSupplier extends BaseSupplier<char[]> {
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() throws Throwable {
         super.hasNext();
         return chars != null;
     }
 
     @Override
-    public char[] next() throws IOException {
+    public char[] next() throws Throwable {
         super.next();
         char[] next = chars;
         preRead();

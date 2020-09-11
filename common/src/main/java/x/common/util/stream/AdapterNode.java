@@ -1,5 +1,9 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
+import x.common.util.Utils;
+
 /**
  * Author: cxx
  * Date: 2020-05-22
@@ -8,8 +12,8 @@ package x.common.util.stream;
 final class AdapterNode<R> extends TerminalNode<R, R> {
     private final int ops;
 
-    AdapterNode(Node<? super R, ?> next, int ops) {
-        this.next = next;
+    AdapterNode(@NonNull Node<? super R, ?> next, int ops) {
+        this.next = Utils.requireNonNull(next);
         this.ops = ops;
     }
 

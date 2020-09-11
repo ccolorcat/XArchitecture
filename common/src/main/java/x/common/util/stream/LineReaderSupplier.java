@@ -1,5 +1,7 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.LineNumberReader;
 
@@ -8,11 +10,11 @@ import java.io.LineNumberReader;
  * Date: 2020-05-21
  * GitHub: https://github.com/ccolorcat
  */
-public class LineReaderSupplier extends BaseSupplier<String> {
+public final class LineReaderSupplier extends BaseSupplier<String> {
     private final LineNumberReader reader;
     private String line;
 
-    public LineReaderSupplier(LineNumberReader reader) {
+    public LineReaderSupplier(@NonNull LineNumberReader reader) {
         this.reader = reader;
         try {
             preRead();
@@ -26,13 +28,13 @@ public class LineReaderSupplier extends BaseSupplier<String> {
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() throws Throwable {
         super.hasNext();
         return line != null;
     }
 
     @Override
-    public String next() throws IOException {
+    public String next() throws Throwable {
         super.next();
         String next = line;
         preRead();

@@ -1,21 +1,25 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.io.Closeable;
 import java.io.IOException;
+
+import x.common.util.Utils;
 
 /**
  * Author: cxx
  * Date: 2020-05-20
  * GitHub: https://github.com/ccolorcat
  */
-class HeadNode<T> extends Node<T, T> {
+final class HeadNode<T> extends Node<T, T> {
     final Supplier<? extends T> supplier;
     OnBegin onBegin;
     OnError onError;
     OnEnd onEnd;
 
-    HeadNode(Supplier<? extends T> supplier) {
-        this.supplier = supplier;
+    HeadNode(@NonNull Supplier<? extends T> supplier) {
+        this.supplier = Utils.requireNonNull(supplier);
     }
 
     @Override
@@ -54,7 +58,6 @@ class HeadNode<T> extends Node<T, T> {
             try {
                 closeable.close();
             } catch (IOException ignore) {
-
             }
         }
     }

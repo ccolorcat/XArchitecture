@@ -1,7 +1,6 @@
 package x.common.util.stream;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * Author: cxx
@@ -9,9 +8,9 @@ import java.io.IOException;
  * GitHub: https://github.com/ccolorcat
  */
 public interface Supplier<T> extends Closeable {
-    boolean hasNext() throws IOException;
+    boolean hasNext() throws Throwable;
 
-    T next() throws IOException;
+    T next() throws Throwable;
 
     long size();
 }

@@ -1,7 +1,11 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.util.Comparator;
 import java.util.List;
+
+import x.common.util.Utils;
 
 /**
  * Author: cxx
@@ -13,9 +17,9 @@ final class MergeNode<T> extends Node<T, T> {
     private final Comparator<? super T> comparator;
     private int index = 0;
 
-    MergeNode(List<? extends T> sorted, Comparator<? super T> comparator) {
-        this.sorted = sorted;
-        this.comparator = comparator;
+    MergeNode(@NonNull List<? extends T> sorted, @NonNull Comparator<? super T> comparator) {
+        this.sorted = Utils.requireNonNull(sorted);
+        this.comparator = Utils.requireNonNull(comparator);
     }
 
     @Override

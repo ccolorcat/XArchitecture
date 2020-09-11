@@ -1,22 +1,26 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+
+import x.common.util.Utils;
 
 /**
  * Author: cxx
  * Date: 2020-05-21
  * GitHub: https://github.com/ccolorcat
  */
-public class ByteSupplier extends BaseSupplier<byte[]> {
+public final class ByteSupplier extends BaseSupplier<byte[]> {
     private final InputStream bis;
     private final byte[] buffer = new byte[8192];
     private byte[] bytes;
 
-    public ByteSupplier(InputStream input) {
-        bis = buffered(input);
+    public ByteSupplier(@NonNull InputStream input) {
+        bis = buffered(Utils.requireNonNull(input, "input == null"));
         try {
             preRead();
         } catch (IOException ignore) {
@@ -34,13 +38,13 @@ public class ByteSupplier extends BaseSupplier<byte[]> {
     }
 
     @Override
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() throws Throwable {
         super.hasNext();
         return bytes != null;
     }
 
     @Override
-    public byte[] next() throws IOException {
+    public byte[] next() throws Throwable {
         super.next();
         byte[] next = bytes;
         preRead();

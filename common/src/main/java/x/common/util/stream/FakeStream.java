@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
  * Date: 2020-05-20
  * GitHub: https://github.com/ccolorcat
  */
-@SuppressWarnings("unused")
-public class FakeStream<T> {
+//@SuppressWarnings("unused")
+public final class FakeStream<T> {
     @SafeVarargs
     public static <T> FakeStream<T> of(T t1, T t2, T... more) {
         List<T> ts = new ArrayList<>(more.length + 2);
@@ -139,7 +139,7 @@ public class FakeStream<T> {
     public FakeStream<T> skipNull() {
         return filter(new Func1<T, Boolean>() {
             @Override
-            public Boolean apply(T t) {
+            public Boolean apply(T t) throws Throwable {
                 return t != null;
             }
         });
@@ -150,7 +150,7 @@ public class FakeStream<T> {
             private int skipCount = 0;
 
             @Override
-            public Boolean apply(T t) {
+            public Boolean apply(T t) throws Throwable {
                 return ++skipCount > count;
             }
         });
