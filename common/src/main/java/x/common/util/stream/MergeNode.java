@@ -1,6 +1,5 @@
 package x.common.util.stream;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -20,7 +19,7 @@ final class MergeNode<T> extends Node<T, T> {
     }
 
     @Override
-    void accept(T t) throws IOException {
+    void accept(T t) throws Throwable {
         final int size = sorted.size();
         if (index >= size) {
             next.accept(t);

@@ -1,7 +1,5 @@
 package x.common.util.stream;
 
-import java.io.IOException;
-
 /**
  * Author: cxx
  * Date: 2020-05-20
@@ -20,7 +18,7 @@ abstract class Node<In, Out> {
         return next.shouldEnd();
     }
 
-    abstract void accept(In in) throws IOException;
+    abstract void accept(In in) throws Throwable;
 
     void end() {
         next.end();

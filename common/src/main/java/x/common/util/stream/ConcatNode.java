@@ -1,7 +1,5 @@
 package x.common.util.stream;
 
-import java.io.IOException;
-
 /**
  * Author: cxx
  * Date: 2020-05-25
@@ -22,7 +20,7 @@ final class ConcatNode<T> extends Node<T, T> {
     }
 
     @Override
-    void accept(T t) throws IOException {
+    void accept(T t) throws Throwable {
         next.accept(t);
     }
 

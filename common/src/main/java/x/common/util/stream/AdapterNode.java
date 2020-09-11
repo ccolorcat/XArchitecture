@@ -1,7 +1,5 @@
 package x.common.util.stream;
 
-import java.io.IOException;
-
 /**
  * Author: cxx
  * Date: 2020-05-22
@@ -31,7 +29,7 @@ final class AdapterNode<R> extends TerminalNode<R, R> {
     }
 
     @Override
-    void accept(R r) throws IOException {
+    void accept(R r) throws Throwable {
         if ((Ops.ACCEPT & ops) != 0) {
             next.accept(r);
         }

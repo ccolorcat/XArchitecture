@@ -25,7 +25,7 @@ class HeadNode<T> extends Node<T, T> {
     }
 
     @Override
-    void accept(T t) throws IOException {
+    void accept(T t) throws Throwable {
         next.accept(t);
     }
 

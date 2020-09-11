@@ -35,7 +35,7 @@ class SortedNode<In> extends Node<In, In> {
     }
 
     @Override
-    void accept(In in) {
+    void accept(In in) throws Throwable {
         sorted.add(in);
     }
 }

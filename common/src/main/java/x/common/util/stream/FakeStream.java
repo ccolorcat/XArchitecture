@@ -1,6 +1,5 @@
 package x.common.util.stream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -129,7 +128,7 @@ public class FakeStream<T> {
     public FakeStream<T> filter(final Func1<? super T, Boolean> filter) {
         return next(new Node<T, T>() {
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 if (filter.apply(t)) {
                     next.accept(t);
                 }
@@ -164,7 +163,7 @@ public class FakeStream<T> {
     public FakeStream<T> peek(final Action1<? super T> peek) {
         return next(new Node<T, T>() {
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 peek.call(t);
                 next.accept(t);
             }
@@ -174,7 +173,7 @@ public class FakeStream<T> {
     public <R> FakeStream<R> map(final Func1<? super T, ? extends R> mapper) {
         return next(new Node<T, R>() {
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 next.accept(mapper.apply(t));
             }
         });
@@ -185,7 +184,7 @@ public class FakeStream<T> {
             private AdapterNode<R> adapter;
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 if (adapter == null) {
                     adapter = new AdapterNode<>(next, Ops.SHOULD_END | Ops.ACCEPT);
                 }
@@ -206,7 +205,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 next.accept(zipper.apply(t, es.get(index++)));
             }
         });
@@ -228,7 +227,7 @@ public class FakeStream<T> {
     public void forEach(final Action1<? super T> consumer) {
         terminate(new TerminalNode<T, Void>() {
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 consumer.call(t);
             }
         });
@@ -237,7 +236,7 @@ public class FakeStream<T> {
     public T findFirst(final Func1<? super T, Boolean> finder) {
         return terminate(new TerminalNode<T, T>() {
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 if (finder.apply(t)) {
                     result = t;
                 }
@@ -254,7 +253,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 if (finder.apply(t)) {
                     result = t;
                 }
@@ -271,7 +270,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) {
+            void accept(T t) throws Throwable {
                 if (result == null || comparator.compare(t, result) > 0) {
                     result = t;
                 }
@@ -304,7 +303,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 result = matcher.apply(t);
             }
         }).result();
@@ -325,7 +324,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 result = matcher.apply(t);
             }
         }).result();
@@ -346,7 +345,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 K key = keyGenerator.apply(t);
                 List<T> value = result.get(key);
                 if (value == null) {
@@ -373,7 +372,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) {
+            void accept(T t) throws Throwable {
                 result.add(t);
             }
         }).result();
@@ -394,7 +393,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) {
+            void accept(T t) throws Throwable {
                 result.add(t);
             }
         }).result();
@@ -415,7 +414,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) {
+            void accept(T t) throws Throwable {
                 ++result;
             }
         }).result();
@@ -430,7 +429,7 @@ public class FakeStream<T> {
             }
 
             @Override
-            void accept(T t) throws IOException {
+            void accept(T t) throws Throwable {
                 result = result == null ? t : computer.apply(result, t);
             }
         }).result();
