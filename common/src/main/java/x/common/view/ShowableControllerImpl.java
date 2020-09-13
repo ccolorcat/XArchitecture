@@ -37,7 +37,7 @@ public final class ShowableControllerImpl implements ShowableController, Lifecyc
     public boolean show(@NonNull String key, Producer<? extends Showable> producer) {
         Showable showable = mCached.get(Utils.requireNonNull(key, "key == null"));
         if (showable == null && producer != null) {
-            showable = Utils.requireNonNull(producer.produce());
+            showable = Utils.requireNonNull(producer.apply());
             mCached.put(key, showable);
         }
         if (showable != null) {

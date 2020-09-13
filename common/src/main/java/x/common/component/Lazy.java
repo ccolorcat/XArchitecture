@@ -34,7 +34,7 @@ public final class Lazy<T> {
         if (value == null) {
             synchronized (this) {
                 if (value == null) {
-                    value = Utils.requireNonNull(producer.produce(), "producer return's null");
+                    value = Utils.requireNonNull(producer.apply(), "producer return's null");
                 }
             }
         }

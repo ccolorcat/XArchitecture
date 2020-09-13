@@ -27,7 +27,7 @@ public final class XLruCache<K, V> extends LruCache<K, V> {
         if (value == null) {
             synchronized (this) {
                 if ((value = get(key)) == null) {
-                    value = Utils.requireNonNull(producer.produce(), "producer returned null");
+                    value = Utils.requireNonNull(producer.apply(), "producer returned null");
                     put(key, value);
                 }
             }
@@ -40,7 +40,7 @@ public final class XLruCache<K, V> extends LruCache<K, V> {
         if (value == null) {
             synchronized (this) {
                 if ((value = get(key)) == null) {
-                    value = Utils.requireNonNull(producer.produce(), "producer returned null");
+                    value = Utils.requireNonNull(producer.apply(), "producer returned null");
                     put(key, value);
                 }
             }

@@ -7,5 +7,5 @@ package x.common.util.function;
  */
 public interface Consumer<T> extends ThrowableConsumer<T> {
     @Override
-    void consume(T t);
+    void call(T t);
 }

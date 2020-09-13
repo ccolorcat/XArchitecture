@@ -11,7 +11,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import x.common.util.function.Func0;
 import x.common.util.stream.FakeStream;
 
 /**
@@ -78,6 +80,18 @@ public class FakeStreamTest {
         List<String> result = FakeStream.of("this", "is", "apple", "test", "abc", "the", "i")
                 .take(3);
         System.out.println(result);
+    }
+
+    @Test
+    public void testTimer() {
+        FakeStream.timer(TimeUnit.MILLISECONDS, 2000L, new Func0<Integer>() {
+            private int number = 0;
+
+            @Override
+            public Integer apply() {
+                return number++;
+            }
+        }).forEach(System.out::println);
     }
 
     @Test

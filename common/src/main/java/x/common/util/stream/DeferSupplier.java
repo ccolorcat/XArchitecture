@@ -3,6 +3,7 @@ package x.common.util.stream;
 import androidx.annotation.NonNull;
 
 import x.common.util.Utils;
+import x.common.util.function.Func0;
 
 /**
  * Author: cxx

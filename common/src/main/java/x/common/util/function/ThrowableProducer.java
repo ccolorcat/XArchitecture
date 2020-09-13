@@ -5,6 +5,5 @@ package x.common.util.function;
  * Date: 2020-09-07
  * GitHub: https://github.com/ccolorcat
  */
-public interface ThrowableProducer<T> {
-    T produce() throws Throwable;
+public interface ThrowableProducer<T> extends Func0<T> {
 }

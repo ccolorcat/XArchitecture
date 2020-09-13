@@ -1,4 +1,4 @@
-package x.common.util.stream;
+package x.common.util.function;
 
 /**
  * Author: cxx

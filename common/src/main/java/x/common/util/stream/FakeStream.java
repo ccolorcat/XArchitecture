@@ -1,5 +1,7 @@
 package x.common.util.stream;
 
+import androidx.annotation.NonNull;
+
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.Reader;
@@ -12,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import x.common.util.function.Action1;
+import x.common.util.function.Func0;
+import x.common.util.function.Func1;
+import x.common.util.function.Func2;
 
 /**
  * Author: cxx
@@ -39,39 +46,39 @@ public final class FakeStream<T> {
         return from(Collections.singletonList(t));
     }
 
-    public static <T> FakeStream<T> defer(final Func0<? extends T> producer) {
+    public static <T> FakeStream<T> defer(@NonNull Func0<? extends T> producer) {
         return generate(new DeferSupplier<>(producer));
     }
 
-    public static <T> FakeStream<T> timer(TimeUnit unit, long interval, Func0<? extends T> producer) {
+    public static <T> FakeStream<T> timer(@NonNull TimeUnit unit, long interval, @NonNull Func0<? extends T> producer) {
         return timer(unit, interval, new DeferSupplier<>(producer));
     }
 
-    public static <T> FakeStream<T> timer(TimeUnit unit, long interval, Supplier<? extends T> supplier) {
+    public static <T> FakeStream<T> timer(@NonNull TimeUnit unit, long interval, @NonNull Supplier<? extends T> supplier) {
         return generate(new TimerSupplier<>(supplier, unit, interval));
     }
 
-    public static <T> FakeStream<T> from(Collection<? extends T> data) {
+    public static <T> FakeStream<T> from(@NonNull Collection<? extends T> data) {
         return generate(new CollectionSupplier<>(data));
     }
 
-    public static FakeStream<String> from(LineNumberReader reader) {
+    public static FakeStream<String> from(@NonNull LineNumberReader reader) {
         return generate(new LineReaderSupplier(reader));
     }
 
-    public static FakeStream<char[]> from(Reader reader) {
+    public static FakeStream<char[]> from(@NonNull Reader reader) {
         return generate(new CharReaderSupplier(reader));
     }
 
-    public static FakeStream<byte[]> from(InputStream input) {
+    public static FakeStream<byte[]> from(@NonNull InputStream input) {
         return generate(new ByteSupplier(input));
     }
 
-    public static <T> FakeStream<T> from(Iterable<? extends T> iterable) {
+    public static <T> FakeStream<T> from(@NonNull Iterable<? extends T> iterable) {
         return generate(new IterableSupplier<>(iterable));
     }
 
-    public static <T> FakeStream<T> generate(Supplier<? extends T> supplier) {
+    public static <T> FakeStream<T> generate(@NonNull Supplier<? extends T> supplier) {
         return new FakeStream<>(new HeadNode<>(supplier));
     }
 

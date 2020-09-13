@@ -5,8 +5,10 @@ import androidx.annotation.NonNull;
 import java.util.NoSuchElementException;
 
 import x.common.util.function.Consumer;
+import x.common.util.function.Mapper;
 import x.common.util.function.Producer;
 import x.common.util.function.ThrowableConsumer;
+import x.common.util.function.ThrowableMapper;
 
 @SuppressWarnings({"unused", "EqualsReplaceableByObjectsCall"})
 public final class FakeOptional<T> {
@@ -52,14 +54,13 @@ public final class FakeOptional<T> {
     }
 
     public void ifPresent(@NonNull Consumer<? super T> consumer) {
-        if (value != null)
-            consumer.consume(value);
+        if (value != null) consumer.call(value);
     }
 
     public boolean safeIfPresent(@NonNull ThrowableConsumer<? super T> consumer) {
         if (value != null) {
             try {
-                consumer.consume(value);
+                consumer.call(value);
                 return true;
             } catch (Throwable ignore) {
             }
@@ -67,12 +68,31 @@ public final class FakeOptional<T> {
         return false;
     }
 
+    @NonNull
+    public <U> FakeOptional<U> map(@NonNull Mapper<? super T, ? extends U> mapper) {
+        Utils.requireNonNull(mapper);
+        return isPresent() ? FakeOptional.ofNullable(mapper.apply(value)) : empty();
+    }
+
+    @NonNull
+    public <U> FakeOptional<U> safeMap(@NonNull ThrowableMapper<? super T, ? extends U> mapper) {
+        Utils.requireNonNull(mapper);
+        if (isPresent()) {
+            try {
+                U u = mapper.apply(value);
+                return FakeOptional.ofNullable(u);
+            } catch (Throwable ignore) {
+            }
+        }
+        return empty();
+    }
+
     public T orElse(T other) {
         return value != null ? value : other;
     }
 
     public T orElseGet(@NonNull Producer<? extends T> other) {
-        return value != null ? value : other.produce();
+        return value != null ? value : other.apply();
     }
 
     @NonNull
@@ -80,7 +100,7 @@ public final class FakeOptional<T> {
         if (value != null) {
             return value;
         } else {
-            throw exceptionProducer.produce();
+            throw exceptionProducer.apply();
         }
     }
 

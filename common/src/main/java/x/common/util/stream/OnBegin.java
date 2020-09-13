@@ -1,5 +1,7 @@
 package x.common.util.stream;
 
+import x.common.util.function.Action0;
+
 /**
  * Author: cxx
  * Date: 2020-05-25

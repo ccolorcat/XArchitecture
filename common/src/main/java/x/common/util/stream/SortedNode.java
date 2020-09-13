@@ -2,9 +2,9 @@ package x.common.util.stream;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 import x.common.util.Utils;
@@ -24,7 +24,7 @@ final class SortedNode<In> extends Node<In, In> {
 
     @Override
     void begin(long size) {
-        sorted = new LinkedList<>();
+        sorted = size > 0 && size <= Integer.MAX_VALUE ? new ArrayList<>((int) size) : new ArrayList<>();
     }
 
     @Override
