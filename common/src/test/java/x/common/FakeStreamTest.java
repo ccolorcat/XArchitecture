@@ -3,8 +3,11 @@ package x.common;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Arrays;
@@ -95,6 +98,26 @@ public class FakeStreamTest {
     }
 
     @Test
+    public void testSkip() {
+        FakeStream.of("this", "is", "a", "test", "hello", "world")
+                .skip(2)
+                .forEach(System.out::println);
+    }
+
+    @Test
+    public void testTake() {
+        List<String> result = FakeStream.of("this", "is", "a", "test", "hello", "world")
+                .take(3);
+        System.out.println(result);
+    }
+
+    @Test
+    public void testCount() {
+        int result = FakeStream.of("this", "is", "a", "test", "hello", "world").count();
+        System.out.println(result);
+    }
+
+    @Test
     public void testDownload() throws Throwable {
         File save = new File(System.getProperty("user.home"), "WeChat.dmg");
         OutputStream output = new FileOutputStream(save);
@@ -110,5 +133,24 @@ public class FakeStreamTest {
                     }
                 })
                 .forEach(output::write);
+    }
+
+    @Test
+    public void testReader() throws Throwable {
+        File file = new File(System.getProperty("user.home"), "设计模式.md");
+        FakeStream.from(new LineNumberReader(new InputStreamReader(new FileInputStream(file))))
+                .filter(s -> !s.isEmpty())
+                .forEach(System.out::println);
+    }
+
+    @Test
+    public void testGenerate() throws Throwable {
+        int sum = FakeStream.of("this", "is", "a", "test", "hello", "world")
+                .concat(Arrays.asList("apple", "tom", "jerry"))
+//                .peek(System.out::println)
+                .map(String::length)
+                .peek(System.out::println)
+                .compute(Integer::sum);
+        System.out.println(sum);
     }
 }

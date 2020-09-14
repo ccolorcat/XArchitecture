@@ -1,13 +1,18 @@
 package x.common.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -57,6 +62,25 @@ public class AndroidUtils {
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             manager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delay, pi);
         }
+    }
+
+    public static boolean isTablet(@NonNull Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    @SuppressLint("HardwareIds")
+    @NonNull
+    public static String getDeviceId(@NonNull Context context) {
+        ContentResolver resolver = context.getContentResolver();
+        String androidId = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        return Utils.nullElse(androidId, "");
+    }
+
+    @NonNull
+    public static String getDeviceName(@NonNull Context context) {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        return adapter != null ? Utils.nullElse(adapter.getName(), "") : "";
     }
 
     private AndroidUtils() {
