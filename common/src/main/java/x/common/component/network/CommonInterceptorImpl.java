@@ -3,7 +3,6 @@ package x.common.component.network;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -11,6 +10,10 @@ import java.util.concurrent.ConcurrentMap;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
+import x.common.component.Hummingbird;
+import x.common.component.core.ClientInfoProvider;
+import x.common.component.core.LocationCore;
+import x.common.component.core.XLocation;
 import x.common.util.Utils;
 
 /**
@@ -24,20 +27,10 @@ final class CommonInterceptorImpl implements CommonInterceptor {
 
     private final ConcurrentMap<SignType, AuthorizationProvider> signTypeProviders = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AuthorizationProvider> signMarkProviders = new ConcurrentHashMap<>();
-    private CommonQueriesProvider queriesProvider = Collections::emptyMap;
-    private UserAgentProvider uaProvider = () -> "";
+    private final ClientInfoProvider clientInfoProvider = Hummingbird.visit(ClientInfoProvider.class);
+    private final LocationCore locationCore = Hummingbird.visit(LocationCore.class);
 
     private CommonInterceptorImpl() {
-    }
-
-    @Override
-    public void setCommonQueriesProvider(@NonNull CommonQueriesProvider provider) {
-        this.queriesProvider = Utils.requireNonNull(provider);
-    }
-
-    @Override
-    public void setUserAgentProvider(@NonNull UserAgentProvider provider) {
-        this.uaProvider = Utils.requireNonNull(provider);
     }
 
     @Override
@@ -68,7 +61,7 @@ final class CommonInterceptorImpl implements CommonInterceptor {
         final Request.Builder builder = request.newBuilder();
 
         String userAgent;
-        if (request.header(USER_AGENT) == null && Utils.isNotEmpty((userAgent = uaProvider.getUserAgent()))) {
+        if (request.header(USER_AGENT) == null && Utils.isNotEmpty((userAgent = getUserAgent()))) {
             builder.header(USER_AGENT, userAgent);
         }
 
@@ -80,11 +73,16 @@ final class CommonInterceptorImpl implements CommonInterceptor {
             }
         }
 
-        Map<String, String> params = queriesProvider.getCommonQueries();
+        Map<String, String> params = getCommonQueries();
         if (!params.isEmpty()) {
             HttpUrl.Builder urlBuilder = url.newBuilder();
+            String key, value;
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                urlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
+                key = entry.getKey();
+                value = entry.getValue();
+                if (Utils.isNotEmpty(key) && Utils.isNotEmpty(value)) {
+                    urlBuilder.addQueryParameter(key, value);
+                }
             }
             builder.url(urlBuilder.build());
         }
@@ -99,5 +97,21 @@ final class CommonInterceptorImpl implements CommonInterceptor {
             if (urlTrunk.matches(entry.getKey())) provider = entry.getValue();
         }
         return provider;
+    }
+
+    @NonNull
+    private String getUserAgent() {
+        return clientInfoProvider.getClientInfo().asUserAgent();
+    }
+
+    @NonNull
+    private Map<String, String> getCommonQueries() {
+        XLocation location = locationCore.getValue();
+        String lng = "", lat = "";
+        if (location != null) {
+            lng = location.getLongitude();
+            lat = location.getLatitude();
+        }
+        return clientInfoProvider.getClientInfo().asCommonQueries(System.currentTimeMillis(), lng, lat);
     }
 }

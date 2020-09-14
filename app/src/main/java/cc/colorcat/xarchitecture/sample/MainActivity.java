@@ -4,9 +4,10 @@ import android.Manifest;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 
-import cc.colorcat.login.LoginNavigation;
 import x.common.component.Hummingbird;
 import x.common.component.Lazy;
 import x.common.component.audio.AudioRecorder;
@@ -15,6 +16,8 @@ import x.common.component.finder.Filename;
 import x.common.component.finder.FinderCore;
 import x.common.component.loader.ObjectLoader;
 import x.common.component.log.Logger;
+import x.common.component.network.ApiCallback;
+import x.common.component.network.ApiException;
 import x.common.component.runtime.RuntimeFor;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
@@ -62,7 +65,30 @@ public class MainActivity extends BaseActivity {
     }
 
     private void test1() {
-        Hummingbird.visit(LoginNavigation.class).launch(this);
+        Hummingbird.visit(TestMoocApi.class)
+                .listCourses(4, 30)
+                .enqueue(new ApiCallback<String>() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull String data) {
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull ApiException cause) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                });
+//        Hummingbird.visit(LoginNavigation.class).launch(this);
 //        Hummingbird.visit(NetworkMonitor.class)
 //                .bind(true, this, (available) -> mLogger.d("network changed: " + available));
 //        ObjectLoader.with(this)

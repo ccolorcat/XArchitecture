@@ -72,15 +72,23 @@ public class AndroidUtils {
     @SuppressLint("HardwareIds")
     @NonNull
     public static String getDeviceId(@NonNull Context context) {
-        ContentResolver resolver = context.getContentResolver();
-        String androidId = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
-        return Utils.nullElse(androidId, "");
+        try {
+            ContentResolver resolver = context.getContentResolver();
+            String androidId = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+            return Utils.nullElse(androidId, "");
+        } catch (Throwable t) {
+            return "";
+        }
     }
 
     @NonNull
     public static String getDeviceName(@NonNull Context context) {
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        return adapter != null ? Utils.nullElse(adapter.getName(), "") : "";
+        try {
+            BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+            return adapter != null ? Utils.nullElse(adapter.getName(), "") : "";
+        } catch (Throwable t) {
+            return "";
+        }
     }
 
     private AndroidUtils() {

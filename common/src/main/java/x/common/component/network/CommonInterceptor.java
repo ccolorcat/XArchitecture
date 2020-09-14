@@ -12,10 +12,6 @@ import x.common.component.annotation.Core;
  */
 @Core(CommonInterceptorImpl.class)
 public interface CommonInterceptor extends Interceptor {
-    void setCommonQueriesProvider(@NonNull CommonQueriesProvider provider);
-
-    void setUserAgentProvider(@NonNull UserAgentProvider provider);
-
     void registerAuthorizationProvider(@NonNull SignType type, @NonNull AuthorizationProvider provider);
 
     void unregisterAuthorizationProvider(@NonNull SignType type);
