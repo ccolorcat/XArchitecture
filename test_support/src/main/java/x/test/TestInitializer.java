@@ -31,10 +31,10 @@ public final class TestInitializer {
     }
 
     public static String testUsername() {
-        return "18986430015";
+        return "1422078854@qq.com";
     }
 
     public static String testPassword() {
-        return "cl031018";
+        return "team123456";
     }
 }
