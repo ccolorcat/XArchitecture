@@ -40,7 +40,7 @@ public final class ClientInfo {
     // pad or phone
     private String deviceType;
 
-    private Lazy<String> userAgent = Lazy.by(() -> "TeamMix/" + versionName
+    private Lazy<String> userAgent = Lazy.by(() -> "Android/" + versionName
             + "(Android;" + deviceBrand + ";" + productModel + ";" + osVersion + ";)"
             + deviceType
     );
