@@ -8,8 +8,12 @@ import androidx.lifecycle.ViewModelStore;
 
 import x.common.IAppClient;
 import x.common.component.Hummingbird;
+import x.common.component.XObserver;
 import x.common.component.core.AccountCore;
 import x.common.component.core.AppCore;
+import x.common.component.core.LocationCore;
+import x.common.component.core.XLocation;
+import x.common.component.log.Logger;
 
 /**
  * Author: cxx
@@ -18,6 +22,7 @@ import x.common.component.core.AppCore;
  */
 public class XApplication extends Application implements IAppClient {
     private final ViewModelStore mGlobalVmStore = new ViewModelStore();
+    private final XObserver<XLocation> mLocationObserver = value -> Logger.getLogger("LocationCore").i("LocationCore.onChange: " + value);
 
     @Override
     public void onCreate() {
@@ -25,6 +30,7 @@ public class XApplication extends Application implements IAppClient {
         Hummingbird.init(this);
         Hummingbird.visit(AppCore.class);
         Hummingbird.visit(AccountCore.class);
+        Hummingbird.visit(LocationCore.class).register(true, mLocationObserver);
     }
 
     @NonNull

@@ -117,7 +117,7 @@ public class ExampleUnitTest {
         FileOperator operator = core.requireFileOperator(Module.ALBUM, "001", Filename.fromUri(url));
         Logger.getDefault().v("path: " + operator.getUri());
         boolean result = operator.quietWrite(url, DownloadWriter.of((finished, total, percent) ->
-                Logger.getDefault().v("finished: %d, total: %d, percent: %d", finished, total, percent))
+                Logger.getDefault().v("finished: " + finished + " total: " + total + " percent: " + percent))
         );
         assertTrue(result);
     }

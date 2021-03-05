@@ -5,15 +5,8 @@ import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import x.common.component.Hummingbird;
-import x.common.component.loader.DownloadListener;
-import x.common.component.loader.ObjectLoader;
-import x.common.component.log.Logger;
-import x.common.util.StoreReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,11 +17,6 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
-
-//    {
-//        XClient client = new XClient();
-//        client.onCreate();
-//    }
 
     public Context getContext() {
         return InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -41,27 +29,6 @@ public class ExampleInstrumentedTest {
         assertEquals("x.common.test", appContext.getPackageName());
     }
 
-    @Test
-    public void testStoreReader() throws Throwable {
-        JSONObject object = new JSONObject();
-        object.put("size", "123");
-        StoreReader reader = StoreReader.fromJson(null);
-        assertEquals(reader.getInt("size", 0), 123);
-    }
-
-    @Test
-    public void testDownloader() {
-        String url = "https://dldir1.qq.com/weixin/mac/WeChatMac.dmg";
-        ObjectLoader.with(Hummingbird.getClient().asAppClient().getApplication())
-                .load(url)
-                .asDownloader()
-                .fetch(new DownloadListener() {
-                    @Override
-                    public void onProgress(long finished, long total, int percent) {
-                        Logger.getDefault().v("onProgress: %d, %d, %d", finished, total, percent);
-                    }
-                });
-    }
 
     @Test
     public void generateTest() {

@@ -3,12 +3,11 @@ package x.common.component.log;
 
 import androidx.annotation.NonNull;
 
-import java.util.Locale;
-
 import x.common.IClient;
 import x.common.component.Hummingbird;
 import x.common.component.XLruCache;
 import x.common.util.Utils;
+import x.common.util.function.Producer;
 
 
 /**
@@ -16,7 +15,6 @@ import x.common.util.Utils;
  * Date: 2020-07-13
  * GitHub: https://github.com/ccolorcat
  */
-@SuppressWarnings("unused")
 public class Logger {
     public static final int VERBOSE = 2;
     public static final int DEBUG = 3;
@@ -28,36 +26,51 @@ public class Logger {
     public static final int ALL = 1;
     public static final int NONE = 8;
 
+    private static final String CLASS_NAME = Logger.class.getName();
+    private static final String SEPARATOR = "=";
+
     private static final String DEFAULT_TAG = "Client";
     private static final XLruCache<String, Logger> LOGGER = new XLruCache<>(6);
-    private static final int MAX_LENGTH = 1024 * 2;
+    private static final int MAX_LENGTH = 4000;
     private static int sThreshold;
     private static LogPrinter sPrinter;
+    private static int sStackTraceDepth;
+    private static int sSeparatorHalfLength;
 
     static {
         IClient client = Hummingbird.getClient();
         sThreshold = client.loggable() ? ALL : NONE;
         sPrinter = Hummingbird.visit(LogPrinter.class);
+        sStackTraceDepth = 3;
+        sSeparatorHalfLength = 50;
     }
 
-    public static void setGlobalThreshold(int threshold) {
+    public static void setThreshold(int threshold) {
         sThreshold = threshold;
     }
 
-    public static void setGlobalLogPrinter(@NonNull LogPrinter printer) {
+    public static void setLogPrinter(@NonNull LogPrinter printer) {
         sPrinter = Utils.requireNonNull(printer, "printer == null");
+    }
+
+    public static void setTraceDepth(int depth) {
+        sStackTraceDepth = Math.max(depth, 0);
+    }
+
+    public static void setSeparatorHalfLength(int halfLength) {
+        sSeparatorHalfLength = Math.max(halfLength, 30);
     }
 
     public static Logger getLogger(@NonNull Object object) {
         return getLogger(Utils.emptyElse(object.getClass().getSimpleName(), DEFAULT_TAG));
     }
 
-    public static Logger getLogger(String name) {
-        if (Utils.isEmpty(name)) throw new IllegalArgumentException("name is empty");
-        Logger logger = LOGGER.get(name);
+    public static Logger getLogger(@NonNull String tag) {
+        if (Utils.isEmpty(tag)) throw new IllegalArgumentException("name is empty");
+        Logger logger = LOGGER.get(tag);
         if (logger == null) {
-            logger = new Logger(name);
-            LOGGER.put(name, logger);
+            logger = new Logger(tag);
+            LOGGER.put(tag, logger);
         }
         return logger;
     }
@@ -68,25 +81,44 @@ public class Logger {
 
     private final String tag;
 
-
-    public void v(String format, Object... args) {
-        log(tag, VERBOSE, format, args);
+    public void v(String msg) {
+        print(VERBOSE, msg);
     }
 
-    public void d(String format, Object... args) {
-        log(tag, DEBUG, format, args);
+    public void v(Producer<CharSequence> producer) {
+        print(VERBOSE, producer);
     }
 
-    public void i(String format, Object... args) {
-        log(tag, INFO, format, args);
+    public void d(String msg) {
+        print(DEBUG, msg);
     }
 
-    public void w(String format, Object... args) {
-        log(tag, WARN, format, args);
+    public void d(Producer<CharSequence> producer) {
+        print(DEBUG, producer);
     }
 
-    public void e(String format, Object... args) {
-        log(tag, ERROR, format, args);
+    public void i(String msg) {
+        print(INFO, msg);
+    }
+
+    public void i(Producer<CharSequence> producer) {
+        print(INFO, producer);
+    }
+
+    public void w(String msg) {
+        print(WARN, msg);
+    }
+
+    public void w(Producer<CharSequence> producer) {
+        print(WARN, producer);
+    }
+
+    public void e(String msg) {
+        print(ERROR, msg);
+    }
+
+    public void e(Producer<CharSequence> producer) {
+        print(ERROR, producer);
     }
 
     public void e(Throwable throwable) {
@@ -95,22 +127,38 @@ public class Logger {
         }
     }
 
-    public void log(int priority, String format, Object... args) {
-        log(tag, priority, format, args);
+    public void log(int priority, String msg) {
+        print(priority, msg);
     }
 
-    private static void log(String tag, int priority, String format, Object... args) {
-        if (priority < sThreshold) return;
-        tag = String.valueOf(tag);
-        String msg = format(format, args);
-        final int length = msg.length();
+    private void print(int priority, Producer<CharSequence> producer) {
+        if (priority >= sThreshold && producer != null) {
+            print(priority, producer.apply());
+        }
+    }
+
+    private void print(int priority, CharSequence msg) {
+        if (priority < sThreshold || Utils.isEmpty(msg)) return;
+        StringBuilder builder = new StringBuilder();
+        int lineLength;
+
+        builder.append(" \n");
+        concatRepeat(builder, SEPARATOR, sSeparatorHalfLength).append(' ').append(tag).append(' ');
+        concatRepeat(builder, SEPARATOR, sSeparatorHalfLength);
+        lineLength = builder.length() - 2;
+        concatStackTrace(builder);
+
+        builder.append("\n\n").append(msg).append('\n');
+        concatRepeat(builder, SEPARATOR, lineLength / SEPARATOR.length());
+        String log = builder.toString();
+        final int length = log.length();
         if (length <= MAX_LENGTH) {
-            sPrinter.println(priority, tag, msg);
+            sPrinter.println(priority, tag, log);
             return;
         }
         for (int start = 0, end; start < length; start = end) {
-            end = friendlyEnd(msg, start, Math.min(start + MAX_LENGTH, length));
-            sPrinter.println(priority, tag, msg.substring(start, end));
+            end = friendlyEnd(log, start, Math.min(start + MAX_LENGTH, length));
+            sPrinter.println(priority, tag, log.substring(start, end));
         }
     }
 
@@ -126,11 +174,28 @@ public class Logger {
         return end;
     }
 
-    private static String format(String format, Object... args) {
-        if (args == null || args.length == 0) {
-            return format;
+    private static StringBuilder concatStackTrace(StringBuilder builder) {
+        if (sStackTraceDepth <= 0) return builder;
+        boolean matched = false;
+        int count = 0;
+        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            if (count >= sStackTraceDepth) break;
+            String msg = e.toString();
+            if (msg.startsWith(CLASS_NAME)) {
+                matched = true;
+            } else if (matched) {
+                ++count;
+                builder.append('\n').append(msg);
+            }
         }
-        return String.format(Locale.getDefault(), format, args);
+        return builder;
+    }
+
+    private static StringBuilder concatRepeat(StringBuilder builder, String str, int count) {
+        for (int i = 0; i < count; i++) {
+            builder.append(str);
+        }
+        return builder;
     }
 
     private Logger(String tag) {

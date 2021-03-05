@@ -10,4 +10,9 @@ import x.common.component.annotation.Core;
  */
 @Core(LocationCoreImpl.class)
 public interface LocationCore extends XObservable<XLocation> {
+    void start();
+
+    void requestLocation();
+
+    void stop();
 }

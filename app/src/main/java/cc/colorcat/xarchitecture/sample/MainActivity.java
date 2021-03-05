@@ -1,6 +1,7 @@
 package cc.colorcat.xarchitecture.sample;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,13 +12,10 @@ import java.io.File;
 import x.common.component.Hummingbird;
 import x.common.component.Lazy;
 import x.common.component.audio.AudioRecorder;
-import x.common.component.finder.FileOperator;
-import x.common.component.finder.Filename;
-import x.common.component.finder.FinderCore;
+import x.common.component.core.LocationCore;
 import x.common.component.loader.ObjectLoader;
 import x.common.component.log.Logger;
-import x.common.component.network.ApiCallback;
-import x.common.component.network.ApiException;
+import x.common.component.runtime.PermissionsHandler;
 import x.common.component.runtime.RuntimeFor;
 import x.common.view.BaseActivity;
 import x.common.view.XHolder;
@@ -25,39 +23,37 @@ import x.common.view.XHolder;
 public class MainActivity extends BaseActivity {
     private final Logger mLogger = Logger.getLogger(this);
 
-    private View.OnClickListener mClick = v -> {
-        switch (v.getId()) {
-            case R.id.btn_test_1:
-                test1();
-                break;
-            case R.id.btn_test_2:
-                test2();
-                break;
-            case R.id.btn_test_3:
-                test3();
-                break;
-            default:
-                break;
-        }
-    };
+    private XHolder mHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        XHolder holder = XHolder.from(this).batchClick(
+        mHolder = XHolder.from(this).batchClick(
                 mClick,
                 R.id.btn_test_1,
                 R.id.btn_test_2,
                 R.id.btn_test_3
         );
         ObjectLoader.with(this)
-                .load("https://i0.hdslb.com/bfs/album/8d5baf53a12b8c2ac81dcb8e28385b79cb07459a.jpg")
+//                .load("https://i0.hdslb.com/bfs/album/8d5baf53a12b8c2ac81dcb8e28385b79cb07459a.jpg")
+                .load("https://up.enterdesk.com/edpic_source/b4/71/23/b47123e5f5ae76ae39b2f009e840226c.jpg")
                 .asImage()
                 .placeholder(R.drawable.ic_launcher_background)
                 .circleCrop()
-                .into(holder.get(R.id.iv_avatar));
+                .into(mHolder.get(R.id.iv_avatar));
     }
+
+    private final View.OnClickListener mClick = v -> {
+        int id = v.getId();
+        if (id == R.id.btn_test_1) {
+            test1();
+        } else if (id == R.id.btn_test_2) {
+            test2();
+        } else if (id == R.id.btn_test_3) {
+            test3();
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -65,51 +61,23 @@ public class MainActivity extends BaseActivity {
     }
 
     private void test1() {
-        Hummingbird.visit(TestMoocApi.class)
-                .listCourses(4, 30)
-                .enqueue(new ApiCallback<String>() {
+        Picker.withGeneral(this)
+                .pick(new Picker.Callback() {
                     @Override
-                    public void onStart() {
-
+                    public void onSucceed(@NonNull File file) {
+                        Logger.getLogger("Picker").d("onResult.file=" + file);
+                        ObjectLoader.with(MainActivity.this)
+                                .load(file)
+                                .asImage()
+                                .circleCrop()
+                                .into(mHolder.get(R.id.iv_avatar));
                     }
 
                     @Override
-                    public void onSuccess(@NonNull String data) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull ApiException cause) {
-
-                    }
-
-                    @Override
-                    public void onFinish() {
-
+                    public void onFailed(@NonNull Throwable throwable) {
+                        Logger.getLogger("Picker").d("onFailed=" + throwable);
                     }
                 });
-//        Hummingbird.visit(LoginNavigation.class).launch(this);
-//        Hummingbird.visit(NetworkMonitor.class)
-//                .bind(true, this, (available) -> mLogger.d("network changed: " + available));
-//        ObjectLoader.with(this)
-//                .load("https://dldir1.qq.com/weixin/mac/WeChatMac.dmg")
-//                .asDownloader()
-//                .fetch(new DownloadListener() {
-//                    @Override
-//                    public void onProgress(long finished, long total, int percent) {
-//                        mLogger.v("onProgress: %d, %d, %d", finished, total, percent);
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(@NonNull FileOperator operator) {
-//                        mLogger.v("onSuccess: " + operator.getUri());
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Throwable throwable) {
-//                        mLogger.e(throwable);
-//                    }
-//                });
     }
 
     private Lazy<AudioRecorder> recorder = Lazy.by(() -> {
@@ -120,25 +88,20 @@ public class MainActivity extends BaseActivity {
 
     private void test2() {
         RuntimeFor.once(this)
-                .permissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .request(permissions -> {
-                    AudioRecorder core = recorder.get();
-                    core.bind(MainActivity.this, value -> Logger.getLogger("AudioRecorder").v("volume: " + value));
-                    FileOperator operator = Hummingbird.visit(FinderCore.class).requireFileOperator(
-                            null,
-                            null,
-                            Filename.of(String.valueOf(System.currentTimeMillis()), "aac")
-                    );
-                    if (core.prepare(new File(operator.getUri().getPath()))) {
-                        core.start();
+                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                .request(new PermissionsHandler() {
+                    @Override
+                    public void onAllGranted(@NonNull String[] permissions) {
+                        Hummingbird.visit(LocationCore.class).start();
                     }
                 });
     }
 
     private void test3() {
-        AudioRecorder recorder = this.recorder.get();
-        recorder.stop();
-        Logger.getLogger("AudioRecorder").v("success: %b, path: %s", recorder.success(), recorder.getRecorded());
-        recorder.reset();
+//        AudioRecorder recorder = this.recorder.get();
+//        recorder.stop();
+//        Logger.getLogger("AudioRecorder").v("success: %b, path: %s", recorder.success(), recorder.getRecorded());
+//        recorder.reset();
+        startActivity(new Intent(this, PhotosActivity.class));
     }
 }
