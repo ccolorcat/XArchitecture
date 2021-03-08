@@ -58,7 +58,7 @@ public class ObjectLoader {
 
     private static final Lazy<FinderCore> FINDER = Lazy.by(() -> Hummingbird.visit(FinderCore.class));
 
-    private Context context;
+    private final Context context;
     private Uri uri;
 
     private String moduleName = Module.UNKNOWN, moduleId = Module.UNKNOWN;
@@ -66,18 +66,6 @@ public class ObjectLoader {
 
     private ObjectLoader(@NonNull Context context) {
         this.context = Utils.requireNonNull(context, "context == null");
-    }
-
-    public ObjectLoader asChatModule(@NonNull String chatId) {
-        return module(Module.CHAT, chatId);
-    }
-
-    public ObjectLoader asAlbumModule(@NonNull String albumId) {
-        return module(Module.ALBUM, albumId);
-    }
-
-    public ObjectLoader asQuickService(@NonNull String id) {
-        return module(Module.QUICK_SERVICE, id);
     }
 
     public ObjectLoader module(@Module String moduleName, String moduleId) {

@@ -29,10 +29,10 @@ public final class TestInitializer {
     }
 
     public static String testUsername() {
-        return "18986430015";
+        return "test user";
     }
 
     public static String testPassword() {
-        return "cl031018";
+        return "test password";
     }
 }
