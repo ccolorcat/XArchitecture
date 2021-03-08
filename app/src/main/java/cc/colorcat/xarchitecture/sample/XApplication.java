@@ -3,7 +3,6 @@ package cc.colorcat.xarchitecture.sample;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 
 import x.common.IAppClient;
@@ -48,12 +47,6 @@ public class XApplication extends Application implements IAppClient {
     @Override
     public boolean loggable() {
         return BuildConfig.DEBUG;
-    }
-
-    @NonNull
-    @Override
-    public ViewModelProvider.AndroidViewModelFactory getAndroidViewModelFactory() {
-        return ViewModelProvider.AndroidViewModelFactory.getInstance(this);
     }
 
     @NonNull

@@ -3,7 +3,6 @@ package x.common;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.io.File;
@@ -35,9 +34,4 @@ public interface IAppClient extends IClient, ViewModelStoreOwner {
 
     @NonNull
     Application getApplication();
-
-    @NonNull
-    default ViewModelProvider.AndroidViewModelFactory getAndroidViewModelFactory() {
-        return ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication());
-    }
 }

@@ -33,10 +33,10 @@ public final class TestInitializer {
     }
 
     public static String testUsername() {
-        return "1422078854@qq.com";
+        return "test user";
     }
 
     public static String testPassword() {
-        return "team123456";
+        return "test password";
     }
 }
