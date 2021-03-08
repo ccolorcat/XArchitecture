@@ -114,7 +114,7 @@ public class ExampleUnitTest {
     public void testFinderCore() {
         String url = "https://dldir1.qq.com/weixin/mac/WeChatMac.dmg";
         FinderCore core = Hummingbird.visit(FinderCore.class);
-        FileOperator operator = core.requireFileOperator(Module.ALBUM, "001", Filename.fromUri(url));
+        FileOperator operator = core.requireFileOperator(Module.ACCOUNT, "001", Filename.fromUri(url));
         Logger.getDefault().v("path: " + operator.getUri());
         boolean result = operator.quietWrite(url, DownloadWriter.of((finished, total, percent) ->
                 Logger.getDefault().v("finished: " + finished + " total: " + total + " percent: " + percent))

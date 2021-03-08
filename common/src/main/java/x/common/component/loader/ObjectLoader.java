@@ -68,18 +68,6 @@ public class ObjectLoader {
         this.context = Utils.requireNonNull(context, "context == null");
     }
 
-    public ObjectLoader asChatModule(@NonNull String chatId) {
-        return module(Module.CHAT, chatId);
-    }
-
-    public ObjectLoader asAlbumModule(@NonNull String albumId) {
-        return module(Module.ALBUM, albumId);
-    }
-
-    public ObjectLoader asQuickService(@NonNull String id) {
-        return module(Module.QUICK_SERVICE, id);
-    }
-
     public ObjectLoader module(@Module String moduleName, String moduleId) {
         this.moduleName = Utils.requireNonNull(moduleName, "moduleName == null");
         this.moduleId = Utils.requireNonNull(moduleId, "moduleId == null");

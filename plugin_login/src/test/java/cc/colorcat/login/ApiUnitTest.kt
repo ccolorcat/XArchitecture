@@ -17,8 +17,5 @@ class ApiUnitTest {
 
     @Test
     fun testLogin() {
-        val service = Hummingbird.visit(AccountService::class.java)
-        val result = service.loginWithPassword("18986430015", "cl031018").execute()
-        Logger.getDefault().v("testLogin: $result")
     }
 }
